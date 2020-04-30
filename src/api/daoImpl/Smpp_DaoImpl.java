@@ -6886,6 +6886,46 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getTpcDatabyPanel(JSONArray jsonArray, String date, String userid, String count) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime ,count(*) as msgcount, report.iddetails.username from sentbox partition("+date+"),report.iddetails where report.iddetails.companyid=sentbox.CompanyId and report.iddetails.userid like '"+userid+"' group by EXTRACT(HOUR_SECOND FROM ServerRequestReceivedDate),report.iddetails.username  order by count(*) desc limit "+count+";";
+		               System.out.println("query = "+query);
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("pushtime", rs.getString("pushtime"));
+				       		jsonObject.put("msgcount", rs.getString("msgcount"));
+				       		jsonObject.put("username", rs.getString("username"));
+				       		jsonArray.put(jsonObject);
+				       	}
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
 				public void getPAnelCountData1(JSONArray jsonArray, String requestdate) {
 				   	Connection connection=DbConnection_SmppSpanel.getInstance().getConnection();
 				   	Statement stmt = null;

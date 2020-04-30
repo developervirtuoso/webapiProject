@@ -1134,6 +1134,23 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        	        	e.printStackTrace();
        	        }
        	    }
+             //################################################################### fetch_tps_by_panel  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("fetch_tps_by_panel")) 
+       		{
+       			try {	
+       				Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       				String date =request.getParameter("req_date");
+       				String userid =request.getParameter("userid");
+       				String count =request.getParameter("count");
+           			JSONArray jsonArray=new JSONArray();
+           			smpp_dao.getTpcDatabyPanel(jsonArray,date,userid,count);
+           			out.print(jsonArray.toString());
+       	    	        	    	
+       	     }catch(Exception e){
+       	        	e.printStackTrace();
+       	        }
+       	    }
+
     	
              
     	

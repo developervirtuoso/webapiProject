@@ -25,19 +25,31 @@ public class C3P0DataSource_All {
 			Class.forName("com.mysql.jdbc.Driver");
 			if(server_to_deploy==1)
 			{
+				System.out.println(" use Report_Data");
 				 dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/Report_Data?autoReconnect=true", "root", "");	
 			}
 			
 			else if(server_to_deploy==2)
 			{
+				
+				System.out.println(" use report");
 				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
 			}
 			else if(server_to_deploy==3)
 			{
+				System.out.println(" use count_sms");
 				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/count_sms?autoReconnect=true", "root", "");
+			}
+			else if(server_to_deploy==4)
+			{
+				System.out.println(" use itextwebv2smpp"+4);
+				System.out.println(" user  reports");
+				System.out.println(" pass  ");
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
 			}
 			else
 			{
+				System.out.println(" use report_panel");
 				
 				  dbconn = DriverManager.getConnection("jdbc:mysql://49.50.105.175:3306/report_panel?autoReconnect=true", "panel", "panel");
 			}
