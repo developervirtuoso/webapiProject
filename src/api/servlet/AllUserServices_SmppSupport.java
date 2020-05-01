@@ -1142,8 +1142,9 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        				String date =request.getParameter("req_date");
        				String userid =request.getParameter("userid");
        				String count =request.getParameter("count");
+       				String datetype =request.getParameter("datetype");
            			JSONArray jsonArray=new JSONArray();
-           			smpp_dao.getTpcDatabyPanel(jsonArray,date,userid,count);
+           			smpp_dao.getTpcDatabyPanel(jsonArray,date,userid,count,datetype);
            			out.print(jsonArray.toString());
        	    	        	    	
        	     }catch(Exception e){

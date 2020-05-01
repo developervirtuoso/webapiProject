@@ -6886,7 +6886,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
-				public void getTpcDatabyPanel(JSONArray jsonArray, String date, String userid, String count) {
+				public void getTpcDatabyPanel(JSONArray jsonArray, String date, String userid, String count, String datetype) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -6894,8 +6894,13 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime ,count(*) as msgcount, report.iddetails.username from sentbox partition("+date+"),report.iddetails where report.iddetails.companyid=sentbox.CompanyId and report.iddetails.userid like '"+userid+"' group by EXTRACT(HOUR_SECOND FROM ServerRequestReceivedDate),report.iddetails.username  order by count(*) desc limit "+count+";";
-		               System.out.println("query = "+query);
+				       String query="";
+				       if(datetype.equalsIgnoreCase("Latest")) {
+				    	   query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,16) as pushtime,count(*) as msgcount, report.iddetails.username from sentbox partition("+date+"),report.iddetails where report.iddetails.companyid=sentbox.CompanyId and report.iddetails.userid like '"+userid+"' group by pushtime ,report.iddetails.username  order by sentbox.Id desc limit "+count+"; ";  
+				       }else {
+				    	   query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime ,count(*) as msgcount, report.iddetails.username from sentbox partition("+date+"),report.iddetails where report.iddetails.companyid=sentbox.CompanyId and report.iddetails.userid like '"+userid+"' group by EXTRACT(HOUR_SECOND FROM ServerRequestReceivedDate),report.iddetails.username  order by count(*) desc limit "+count+";";
+				       }
+				       System.out.println("query = "+query);
 				       rs = stmt.executeQuery(query);
 				      
 				       	while (rs.next()) {
