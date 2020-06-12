@@ -6776,7 +6776,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select senderid,sum(count) as count from "+tablename+" where  ErrorCode like '"+errorcode+"' and account_name like '%"+account_name+"%' and date like '"+reqdate+"%' group by senderid;";
+				       String query="select senderid,sum(count) as count,account_name from "+tablename+" where  ErrorCode like '"+errorcode+"' and account_name like '%"+account_name+"%' and date like '"+reqdate+"%' group by senderid;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -6784,6 +6784,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		JSONObject jsonObject=new JSONObject();
 				       		jsonObject.put("senderid", rs.getString("senderid"));
 				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("account_name", rs.getString("account_name"));
 				       		jsonArray.put(jsonObject);
 				       }
 				     }catch(Exception e){
