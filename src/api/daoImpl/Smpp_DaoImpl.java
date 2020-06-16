@@ -7045,7 +7045,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		if(rs.getString("Circle")!=null) {
 				       			jsonObject.put("circle", rs.getString("Circle"));
 				       		}else {
-				       			jsonObject.put("Circle", "");
+				       			jsonObject.put("circle", "");
 				       		}
 				       		if(rs.getString("count")!=null) {
 				       			jsonObject.put("count", rs.getString("count"));
