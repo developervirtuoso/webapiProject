@@ -7012,4 +7012,69 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getLrnLiveData(JSONArray jsonArray, String errorcode, String accountId, String tablename) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(5);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select SenderId,LRN,operator,Circle,count(*) as count from "+tablename+" where AccountId like '"+accountId+"' and ErrorCode like '"+errorcode+"' group by SenderId,LRN,operator,Circle;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		if(rs.getString("SenderId")!=null) {
+				       			jsonObject.put("senderid", rs.getString("SenderId"));
+				       		}else {
+				       			jsonObject.put("senderid", "");
+				       		}
+				       		if(rs.getString("LRN")!=null) {
+				       			jsonObject.put("lrn", rs.getString("LRN"));
+				       		}else {
+				       			jsonObject.put("lrn", "0");
+				       		}
+				       		if(rs.getString("operator")!=null) {
+				       			jsonObject.put("operator", rs.getString("operator"));
+				       		}else {
+				       			jsonObject.put("operator", "");
+				       		}
+				       		if(rs.getString("Circle")!=null) {
+				       			jsonObject.put("circle", rs.getString("Circle"));
+				       		}else {
+				       			jsonObject.put("Circle", "");
+				       		}
+				       		if(rs.getString("count")!=null) {
+				       			jsonObject.put("count", rs.getString("count"));
+				       		}else {
+				       			jsonObject.put("count", "0");
+				       		}
+				       		
+				       		jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   
+				}
 }

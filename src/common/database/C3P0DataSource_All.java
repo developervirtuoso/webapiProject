@@ -47,6 +47,10 @@ public class C3P0DataSource_All {
 				System.out.println(" pass  ");
 				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
 			}
+			else if(server_to_deploy==5)
+			{
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/LRN_LIVE?autoReconnect=true", "root", "");
+			}
 			else
 			{
 				System.out.println(" use report_panel");

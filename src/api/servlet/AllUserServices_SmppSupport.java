@@ -998,6 +998,18 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			out.print(jsonArray.toString());
        			
        		}
+           //################################################################### getLrnLiveByDate  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getLrnLiveByDate")) 
+       		{
+       			String errorcode=request.getParameter("errorcode");
+       			String accountId=request.getParameter("accountId");
+       			String tablename=request.getParameter("tablename");
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			smpp_dao.getLrnLiveData(jsonArray,errorcode,accountId,tablename);
+       			out.print(jsonArray.toString());
+       			
+       		}
            //################################################################### getapr20withSenderId  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("getapr20withSenderId")) 
        		{
