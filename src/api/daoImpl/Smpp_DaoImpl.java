@@ -7012,7 +7012,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
-				public void getLrnLiveData(JSONArray jsonArray, String errorcode, String accountId, String tablename) {
+				public void getLrnLiveData(JSONArray jsonArray, String errorcode, String accountId, String tablename, String senderid) {
 
 				   	Connection connection=DbConnection_All.getInstance().getConnection(5);
 				   	Statement stmt = null;
@@ -7021,7 +7021,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select SenderId,LRN,operator,Circle,count(*) as count from "+tablename+" where AccountId like '"+accountId+"' and ErrorCode like '"+errorcode+"' group by SenderId,LRN,operator,Circle;";
+				       String query="select SenderId,LRN,operator,Circle,count(*) as count from "+tablename+" where AccountId like '"+accountId+"' and ErrorCode like '"+errorcode+"' and SenderId like '"+senderid+"%' group by SenderId,LRN,operator,Circle;";
 		               
 				       rs = stmt.executeQuery(query);
 				      

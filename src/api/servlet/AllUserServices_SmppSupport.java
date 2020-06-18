@@ -1004,9 +1004,10 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String errorcode=request.getParameter("errorcode");
        			String accountId=request.getParameter("accountId");
        			String tablename=request.getParameter("tablename");
+       			String senderid=request.getParameter("senderid");
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
-       			smpp_dao.getLrnLiveData(jsonArray,errorcode,accountId,tablename);
+       			smpp_dao.getLrnLiveData(jsonArray,errorcode,accountId,tablename,senderid);
        			out.print(jsonArray.toString());
        			
        		}
