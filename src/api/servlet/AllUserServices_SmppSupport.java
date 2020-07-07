@@ -46,6 +46,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
 import all.beans.SmppUser;
+import api.daoImpl.SendEmail;
 import api.daoImpl.Smpp_DaoImpl;
 import common.database.DbConnectionMongo;
 import mylibs.Cons_msg;
@@ -1164,7 +1165,25 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        	        	e.printStackTrace();
        	        }
        	    }
-
+           //################################################################### send_mail_api   ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("send_mail_api")) 
+       		{
+       			try {	
+       				Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       				String email =request.getParameter("email");
+       				String subject =request.getParameter("subject");
+       				String txt =request.getParameter("txt");
+       				Thread thread=new Thread() {
+       					public void run() {
+       						SendEmail sendEmail=new SendEmail(email, subject, txt);
+       					};
+       				};
+       				thread.start();
+            	        	    	
+       	     }catch(Exception e){
+       	        	e.printStackTrace();
+       	        }
+       	    }
     	
              
     	
