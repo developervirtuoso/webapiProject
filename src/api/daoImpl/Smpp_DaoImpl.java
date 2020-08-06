@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,6 +52,10 @@ import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -63,6 +68,7 @@ import com.mongodb.util.JSON;
 import all.beans.Count_sms_user;
 import all.beans.Count_sms_user1;
 import all.beans.Pojo_Count_Submitted;
+import all.beans.SentBoxBulkFiles;
 import all.beans.SmppUser;
 import all.beans.SmppUserDetails;
 import api.servlet.MyRunnable;
@@ -74,6 +80,7 @@ import common.database.DbConnection_Smpp;
 import common.database.DbConnection_SmppSpanel;
 import common.database.DbConnection_Trafic;
 import common.database.DbConnection_on_off;
+import mylibs.ApiCons;
 import mylibs.MyRunnable_SyncEmail;
 import response_pojo.pojo_admin_user_Complaints_count;
 import superAdmin.servlet.smppSignIn;
@@ -84,7 +91,12 @@ import superAdmin.servlet.smppSignIn;
 
 public class Smpp_DaoImpl {
 	public static void main(String[] args) {
-		
+		Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+		String table="dummy_table";
+	  		boolean truncatestatus=daoImpl.dropTable(table);
+	  		int i=daoImpl.createDummyTable(table,"");
+   	  		int alert_i=daoImpl.alterTable(table,"");
+   	  	boolean load_data_status=daoImpl.LoadSentBoxDateFile(table,"");
 	}
 
 	final static Logger logger = Logger.getLogger(Smpp_DaoImpl.class);
@@ -6320,6 +6332,42 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public boolean dropTable(String table) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	boolean truncatestatus=false;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="drop table "+table+";";
+		               
+				        stmt.executeUpdate(query);
+				      
+				       //logger.info("delivered query"+query);
+				       
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return truncatestatus;
+					
+				   
+				   }
 				public boolean TruncateTable() {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
@@ -7077,4 +7125,361 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   
 				}
+				public void getSentBoxData(JSONArray jsonArray, String date, String searchdata, String type,
+						String acc_id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       if (type.equalsIgnoreCase("mobileNo")) {
+		                  query = "select inbounddlr.GatewayId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+") where sentbox.MobileNumber ='"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                }else if (type.equalsIgnoreCase("aliasId")) {
+		                    query = "select inbounddlr.GatewayId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+") where sentbox.AliasMessageId like '"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                    System.out.println(query);
+		                }
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("gatewayId", rs.getLong("GatewayId"));
+		                    jsonObject.put("mobileNumber", rs.getString("mobileNumber"));
+		                    jsonObject.put("sentDate", rs.getString("SentDate"));
+		                    jsonObject.put("recvDate", rs.getString("RecvDate"));
+		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
+		                    jsonObject.put("messageId", rs.getString("MessageId"));
+		                    jsonObject.put("senderId", rs.getString("SenderId"));
+		                    jsonObject.put("status", rs.getString("Status"));
+		                    jsonObject.put("errorCode", rs.getString("ErrorCode"));
+		                    jsonObject.put("message", rs.getString("Message"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void callApiSendBoxBulkStatus(SentBoxBulkFiles boxBulkFiles) {
+					//Thread thread = new Thread(){
+					  //  public void run(){
+					    	String jsonData="";
+							try {
+								HttpResponse<JsonNode> response = Unirest.post(ApiCons.cwcBaseUrl+"sendbulkstatus")
+										.header("Content-Type", "application/x-www-form-urlencoded")
+										.field("id", boxBulkFiles.getId())
+										.field("status", boxBulkFiles.getStatus())
+										.field("process", boxBulkFiles.getProcess())
+										.field("status_msg", boxBulkFiles.getStatus_msg())
+										.field("get_file", boxBulkFiles.getGet_file())
+										.field("run_status", boxBulkFiles.getRun_status())
+										.asJson();
+								jsonData=response.getBody().toString();
+							} catch (UnirestException e) {
+								e.printStackTrace();
+							}
+					      
+					//    }
+					 // };
+
+					 // thread.start();
+					
+				}
+				
+				public int createDummyTable(String table, String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	int i=0;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String sql = "create table "+table+" (AliasMessageId varchar(136));"; 
+
+				        i=stmt.executeUpdate(sql);
+				        if(i>0) {
+				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("3");
+								boxBulkFiles.setProcess("15%");
+								boxBulkFiles.setStatus_msg("Created tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+							    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				        }
+		               
+				      
+				       //logger.info("delivered query"+query);
+				       
+				     }catch(Exception e){
+				    	 Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+			        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("10%");
+							boxBulkFiles.setStatus_msg("not create table");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return i;
+					
+				   
+				   }
+				public int alterTable(String table, String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	int i=0;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String sql = "alter table "+table+" add (MobileNumber varchar(12),SenderId varchar(10),MessageId varchar(36),SentbStatus varchar(50),DLRStatus varchar(50),ErrorCode varchar(20),AccountId varchar(10),GatewayId varchar(10),SentDate datetime,RecvDate datetime,TimeDiff varchar(10),Message varchar(100));"; 
+				       i=stmt.executeUpdate(sql);
+				        sql = "alter table "+table+" add index(MobileNumber,AliasMessageId,MessageId,DLRStatus,ErrorCode,SenderId,RecvDate,GatewayId,Message,SentbStatus,SentDate,AccountId);"; 
+				       i=stmt.executeUpdate(sql);
+				        if(i>0) {
+				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("4");
+								boxBulkFiles.setProcess("25%");
+								boxBulkFiles.setStatus_msg("Alter tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+							    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				        }
+		               
+				      
+				       //logger.info("delivered query"+query);
+				       
+				     }catch(Exception e){
+				    	 Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+			        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("15%");
+							boxBulkFiles.setStatus_msg("not Alter tables");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return i;
+					
+				   
+				   }
+				public boolean LoadSentBoxDateFile(String table, String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	boolean load_data_status=false;
+				   	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="load data local infile '/home/dummy_file.txt' into table "+table+" (AliasMessageId);";
+				       //String query="load data local infile 'C://Users//Dell//Desktop//VNS War file//CWC//dummy_file.txt' into table "+table+" (AliasMessageId);";
+		              
+				       int i = stmt.executeUpdate(query);
+				      
+				       //logger.info("delivered query"+query);
+				       
+				       	
+				        SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+					 	boxBulkFiles.setId(id);
+						boxBulkFiles.setStatus("5");
+						boxBulkFiles.setProcess("45%");
+						boxBulkFiles.setStatus_msg("Loaded files");
+						boxBulkFiles.setGet_file("");
+						boxBulkFiles.setRun_status("1");
+						daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				     }catch(Exception e){
+				    	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("25%");
+							boxBulkFiles.setStatus_msg("Failed lod file");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return load_data_status;
+					
+				   
+				   }
+				public int updateSendBoxtable(String table, String id, String currentDate, String preDate,
+						String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						  ps=conn.prepareStatement("update "+table+",sentbox partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".GatewayId=sentbox.GatewayId,"+table+".MessageId=sentbox.MessageId,"+table+".MobileNumber=sentbox.MobileNumber,"+table+".AccountId=sentbox.AccountId,"+table+".SentDate=sentbox.SubmitDate,"+table+".SentbStatus=sentbox.Status,"+table+".Message=sentbox.Message,"+table+".SenderId=sentbox.SenderId where "+table+".AliasMessageId=sentbox.AliasMessageId;");
+						  i= ps.executeUpdate();
+						  ps=conn.prepareStatement("update "+table+",inbounddlr partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".RecvDate=inbounddlr.DoneDate,"+table+".DLRStatus=inbounddlr.Status,"+table+".ErrorCode=inbounddlr.ErrorCode where "+table+".AliasMessageId=inbounddlr.AliasMessageId;");
+						  i= ps.executeUpdate();
+						  ps=conn.prepareStatement("update "+table+" set RecvDate=(date_add(RecvDate, interval 5.30 hour_minute));");
+						  i= ps.executeUpdate();
+						  ps=conn.prepareStatement("update "+table+" set SentDate=(date_add(SentDate, interval 5.30 hour_minute));");
+						  i= ps.executeUpdate();
+						  ps=conn.prepareStatement("update "+table+" set TimeDiff= TIMESTAMPDIFF(minute,dummy_table.SentDate,dummy_table.RecvDate);");
+						  i= ps.executeUpdate();
+						  SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("6");
+							boxBulkFiles.setProcess("75%");
+							boxBulkFiles.setStatus_msg("Updated tables");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("1");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+					}
+					catch(Exception e)
+					{
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("failed Update tables");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public boolean uploadSentBoxFile(String filename, String table, String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	boolean upload_file_status=false;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select *  into outfile '/tmp/"+filename+"' fields terminated by ',' from "+table+" ;";
+				       rs = stmt.executeQuery(query);
+				      // int i = stmt.executeUpdate(query);
+				      
+				       
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return upload_file_status;
+					
+				   
+				   }
+				
 }

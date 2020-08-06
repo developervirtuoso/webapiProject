@@ -25,8 +25,8 @@ public class C3P0DataSource_Search {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			
-			 dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
-			// dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/count_sms?autoReconnect=true", "root", "");
+			dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
+			// dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?autoReconnect=true", "root", "");
 			 
 			 
 		} catch (Exception ex) {

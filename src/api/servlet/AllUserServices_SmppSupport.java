@@ -45,10 +45,12 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
+import all.beans.SentBoxBulkFiles;
 import all.beans.SmppUser;
 import api.daoImpl.SendEmail;
 import api.daoImpl.Smpp_DaoImpl;
 import common.database.DbConnectionMongo;
+import mylibs.ApiCons;
 import mylibs.Cons_msg;
 import response_pojo.pojo_Status_Msg;
 import response_pojo.pojo_admin_user_Complaints_count;
@@ -207,6 +209,22 @@ public class AllUserServices_SmppSupport extends HttpServlet {
         	  System.out.println("search_keywordsearch_keywordsearch_keyword"+search_keyword);
         	  System.out.println("acc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_id"+acc_id);
         	daoImpl.getSearchSmppData(jsonArray,acc_name,date,searchdata,search_keyword,acc_id,date);
+        	 out.print(jsonArray.toString());
+        	  
+        	  
+          }
+        //################################################################### get_sentbox_data  ###################################################################//         
+          if (request.getParameter("api_type").equalsIgnoreCase("get_sentbox_data")) 
+          {
+        	  Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+        	  JSONArray jsonArray=new JSONArray();
+        	  String userName = request.getParameter("userName");
+        	  String date = request.getParameter("date");
+        	  System.out.println(date);
+        	  String searchdata=request.getParameter("searchdata");
+        	  String type = request.getParameter("type");
+        	  String acc_id=daoImpl.getResetSearchId(userName);
+        	  daoImpl.getSentBoxData(jsonArray,date,searchdata,type,acc_id);
         	 out.print(jsonArray.toString());
         	  
         	  
@@ -1044,9 +1062,112 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			out.print(jsonObject.toString());
        			
        		}
+           //################################################################### get_sentbox_bulkData  ###################################################################//         
+             if (request.getParameter("api_type").equalsIgnoreCase("get_sentbox_bulkData")) 
+             {
+           	  Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+           	  String url = request.getParameter("url");
+           	  String id = request.getParameter("id");
+           	  String currentDate = request.getParameter("currentDate");
+           	  String preDate = request.getParameter("preDate");
+           	  String nextDate = request.getParameter("nextDate");
+           	  String type = request.getParameter("type");
+           	  String filename = request.getParameter("filename");
+           	  System.out.println("urlurlurl==>>"+url);
+           	  System.out.println("ididid==>>"+id);
+           	  System.out.println("currentDate==>>"+currentDate);
+	           	System.out.println("preDatepreDate==>>"+preDate);
+	           	System.out.println("nextDatenextDate==>>"+nextDate);
+	           	System.out.println("typetype==>>"+type);
+	           	System.out.println("filenamefilename==>>"+filename);
+           	
+           	  try (BufferedInputStream inputStream = new BufferedInputStream(new URL(url).openStream());
+					  FileOutputStream fileOS = new FileOutputStream("/home/dummy_file.txt")) {
+					    byte data[] = new byte[1024];
+					    int byteContent;
+					    while ((byteContent = inputStream.read(data, 0, 1024)) != -1) {
+					        fileOS.write(data, 0, byteContent);
+					    }
+					    SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+					    boxBulkFiles.setId(id);
+						boxBulkFiles.setStatus("2");
+						boxBulkFiles.setProcess("10%");
+						boxBulkFiles.setStatus_msg("downloaded file");
+						boxBulkFiles.setGet_file("");
+						boxBulkFiles.setRun_status("1");
+					    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+					} catch (IOException e) {
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("0%");
+							boxBulkFiles.setStatus_msg("failed download file");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+					    e.printStackTrace();
+					}
+           	  		String table="dummy_table";
+           	  		boolean truncatestatus=daoImpl.dropTable(table);
+           	  		int i=daoImpl.createDummyTable(table,id);
+           	  		int alert_i=daoImpl.alterTable(table,id);
+           	  		boolean load_data_status=daoImpl.LoadSentBoxDateFile(table,id);
+           	  		int update_i=daoImpl.updateSendBoxtable(table,id,currentDate,preDate,nextDate);
+           	  		
+           	  	boolean upload_file_status=daoImpl.uploadSentBoxFile(filename,table,id);
+           	  	String uploadFile="";
+			  		String fileurl="";
+			  				//tpanel//usr/local/apache-tomcat-8.5.49/webapps/webapi/
+       				if(type.equalsIgnoreCase("3") || type.equalsIgnoreCase("TPanel")){
+       						fileurl= "/usr/local/apache-tomcat-8.5.49/webapps/webapi/uploaded/"+filename;
+       						uploadFile=ApiCons.tpanelBaseUrl+"uploaded/"+filename;
+       				}else if(type.equalsIgnoreCase("2") || type.equalsIgnoreCase("SPanel")){
+       					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;
+       					uploadFile=ApiCons.spanelBaseUrl+"uploaded/"+filename;
+       				}else if(type.equalsIgnoreCase("1") || type.equalsIgnoreCase("Panel")){
+       					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;
+       					uploadFile=ApiCons.panelBaseUrl+"uploaded/"+filename;
+       				}
+       				 Path temp = Files.move
+   						        (Paths.get("/tmp/"+filename), 
+   						        Paths.get(fileurl));
+				        if(temp != null)
+				        {
+				            System.out.println("File renamed and moved successfully");
+				            SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+				            boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("7");
+							boxBulkFiles.setProcess("100%");
+							boxBulkFiles.setStatus_msg("Completed all process");
+							boxBulkFiles.setGet_file(uploadFile);
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				        }
+				        else
+				        {
+				            System.out.println("Failed to move the file");
+				            SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+				            boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("6");
+							boxBulkFiles.setProcess("75%");
+							boxBulkFiles.setStatus_msg("not uploaded your file to mysql");
+							boxBulkFiles.setGet_file(uploadFile);
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				        } 
+				        JSONObject jobj = new JSONObject();
+	       		    	jobj.put("truncatestatus", truncatestatus);
+	       		    	jobj.put("load_data_status", load_data_status);
+	       		    	jobj.put("upload_file_status", upload_file_status);
+	       		    	jobj.put("filename", "uploaded/"+filename);
+	       		    	out.println(jobj.toString());
+           	  
+           	  
+             }
              //################################################################### sendbulkdata  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("sendbulkdata")) 
        		{
+       			
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONObject jobj = new JSONObject();
        			String bytedata=request.getParameter("bytedata");
