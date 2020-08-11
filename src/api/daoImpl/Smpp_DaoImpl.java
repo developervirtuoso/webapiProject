@@ -7125,6 +7125,253 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   
 				}
+				public void getGateWayAnalysis1(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("tot", rs.getString("tot"));
+		                    jsonObject.put("dist", rs.getString("dist"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getFailureAnalysis(JSONArray jsonArray, String sql) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+		               rs = stmt.executeQuery(sql);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getTrafficAnalysis(JSONArray jsonArray, String sql) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+		               rs = stmt.executeQuery(sql);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("pushtime", rs.getString("pushtime"));
+		                    jsonObject.put("msgcount", rs.getString("msgcount"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getGateWayAnalysis2(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("tot", rs.getString("tot"));
+		                    jsonObject.put("dist", rs.getString("dist"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getLastEntry1(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("submit", rs.getString("submit"));
+		                    jsonObject.put("receive", rs.getString("receive"));
+		                    jsonObject.put("status", rs.getString("Status"));
+		                    jsonObject.put("mobileNumber", rs.getString("MobileNumber"));
+		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getLastEntry2(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,AliasMessageId,report.iddetails.username from inbounddlr partition("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid order by receive desc limit 5;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("submit", rs.getString("submit"));
+		                    jsonObject.put("receive", rs.getString("receive"));
+		                    jsonObject.put("status", rs.getString("Status"));
+		                    jsonObject.put("mobileNumber", "");
+		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
 				public void getSentBoxData(JSONArray jsonArray, String date, String searchdata, String type,
 						String acc_id) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
@@ -7478,6 +7725,88 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 
 				   	}
 					return upload_file_status;
+					
+				   
+				   }
+				public void checkingMobileNo(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date+"),report.iddetails where sentbox.CompanyId=report.iddetails.CompanyId and MobileNumber not like '91__________' group by report.iddetails.username ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getSpanFailureAnalysis(JSONArray jsonArray, String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select AccountId,SenderId,count(Message) as cnt, Message from sentbox partition ("+date+") where SenderId like '00%' group by SenderId,Message order by cnt desc limit 10;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("accountId", rs.getString("AccountId"));
+		                    jsonObject.put("senderId", rs.getString("SenderId"));
+		                    jsonObject.put("cnt", rs.getString("cnt"));
+		                    jsonObject.put("message", rs.getString("Message"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
 					
 				   
 				   }

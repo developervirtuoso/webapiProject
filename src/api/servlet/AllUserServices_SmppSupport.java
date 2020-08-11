@@ -1062,6 +1062,90 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			out.print(jsonObject.toString());
        			
        		}
+           //################################################################### lastEntry  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntry")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			smpp_dao.getLastEntry1(jsonArray, date);
+       			smpp_dao.getLastEntry2(jsonArray, date);
+       			out.print(jsonArray.toString());
+       			
+       		}
+           //################################################################### gatewayAnalysis  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("gatewayAnalysis")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			smpp_dao.getGateWayAnalysis1(jsonArray, date);
+       			smpp_dao.getGateWayAnalysis2(jsonArray, date);
+       			out.print(jsonArray.toString());
+       			
+       		}
+           //################################################################### failureAnalysis  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("failureAnalysis")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			String sqlno = request.getParameter("sqlno");
+       			String sql="";
+       			if(sqlno.equals("1")) {
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       			}else if(sqlno.equals("2")) {
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       			}else if(sqlno.equals("3")) {
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
+       			}else if(sqlno.equals("4")) {
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
+       			}else if(sqlno.equals("5")) {
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
+       			}
+       			smpp_dao.getFailureAnalysis(jsonArray, sql);
+       			out.print(jsonArray.toString());
+       			
+       		}
+           //################################################################### trafficAnalysis  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("trafficAnalysis")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			String sqlno = request.getParameter("sqlno");
+       			String sql="";
+       			if(sqlno.equals("1")) {
+       				sql="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as pushtime,count(distinct AliasMessageId) as msgcount from sentbox partition("+date+") group by mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) with rollup;";
+       			}else if(sqlno.equals("2")) {
+       				sql="SELECT mid(date_add(DoneDate, interval 5.30 hour_minute),1,13) as pushtime,count(distinct AliasMessageId) as msgcount from inbounddlr partition("+date+") where Status is not null group by mid(date_add(DoneDate, interval 5.30 hour_minute),1,13) with rollup;";
+       			}
+       			smpp_dao.getTrafficAnalysis(jsonArray, sql);
+       			out.print(jsonArray.toString());
+       			
+       		}
+           //################################################################### checkingMobileNo  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("checkingMobileNo")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			
+       			smpp_dao.checkingMobileNo(jsonArray, date);
+       			out.print(jsonArray.toString());
+       			
+       		}
+           //################################################################### spamFailureAnalysis  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("spamFailureAnalysis")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			
+       			smpp_dao.getSpanFailureAnalysis(jsonArray, date);
+       			out.print(jsonArray.toString());
+       			
+       		}
            //################################################################### get_sentbox_bulkData  ###################################################################//         
              if (request.getParameter("api_type").equalsIgnoreCase("get_sentbox_bulkData")) 
              {
