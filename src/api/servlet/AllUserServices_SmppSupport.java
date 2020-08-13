@@ -45,6 +45,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
+import all.beans.BulkMismatchBeans;
 import all.beans.SentBoxBulkFiles;
 import all.beans.SmppUser;
 import api.daoImpl.SendEmail;
@@ -1079,8 +1080,12 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
        			String date = request.getParameter("date");
-       			smpp_dao.getGateWayAnalysis1(jsonArray, date);
-       			smpp_dao.getGateWayAnalysis2(jsonArray, date);
+       			String sqlno = request.getParameter("sqlno");
+       			if(sqlno.equals("1")) {
+       				smpp_dao.getGateWayAnalysis1(jsonArray, date);
+       			}else if(sqlno.equals("2")) {
+       				smpp_dao.getGateWayAnalysis2(jsonArray, date);
+       			}
        			out.print(jsonArray.toString());
        			
        		}
@@ -1093,15 +1098,15 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String sqlno = request.getParameter("sqlno");
        			String sql="";
        			if(sqlno.equals("1")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("2")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("3")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("4")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("5")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
        			}
        			smpp_dao.getFailureAnalysis(jsonArray, sql);
        			out.print(jsonArray.toString());
@@ -1242,6 +1247,81 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 				        JSONObject jobj = new JSONObject();
 	       		    	jobj.put("truncatestatus", truncatestatus);
 	       		    	jobj.put("load_data_status", load_data_status);
+	       		    	jobj.put("upload_file_status", upload_file_status);
+	       		    	jobj.put("filename", "uploaded/"+filename);
+	       		    	out.println(jobj.toString());
+           	  
+           	  
+             }
+           //################################################################### get_bulk_mismatch  ###################################################################//         
+             if (request.getParameter("api_type").equalsIgnoreCase("get_bulk_mismatch")) 
+             {
+           	  Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+           	  String id = request.getParameter("id");
+           	  String currentDate = request.getParameter("currentDate");
+           	  String preDate = request.getParameter("preDate");
+           	  String nextDate = request.getParameter("nextDate");
+           	  String type = request.getParameter("type");
+           	  String filename = request.getParameter("filename");
+           	  System.out.println("ididid==>>"+id);
+           	  System.out.println("currentDate==>>"+currentDate);
+	           	System.out.println("preDatepreDate==>>"+preDate);
+	           	System.out.println("nextDatenextDate==>>"+nextDate);
+	           	System.out.println("typetype==>>"+type);
+	           	System.out.println("filenamefilename==>>"+filename);
+           	
+	           		String table="misdlranal";
+           	  		boolean truncatestatus=daoImpl.dropTable(table);
+           	  		int i=daoImpl.createMisDlranalTable(id);
+           	  		
+           	  		int alert_i=daoImpl.alterBulkMisTable(id);
+           	  		int insert_i=daoImpl.insertBulkMis(id,preDate,currentDate,nextDate);
+           	  		int update_i=daoImpl.updateBulkMis(id,preDate,currentDate,nextDate);
+           	  		
+           	  	boolean upload_file_status=daoImpl.uploadBulkMisFile(filename,id);
+           	  	String uploadFile="";
+			  		String fileurl="";
+			  				//tpanel//usr/local/apache-tomcat-8.5.49/webapps/webapi/
+       				if(type.equalsIgnoreCase("3") || type.equalsIgnoreCase("TPanel")){
+       						fileurl= "/usr/local/apache-tomcat-8.5.49/webapps/webapi/uploaded/"+filename;
+       						uploadFile=ApiCons.tpanelBaseUrl+"uploaded/"+filename;
+       				}else if(type.equalsIgnoreCase("2") || type.equalsIgnoreCase("SPanel")){
+       					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;
+       					uploadFile=ApiCons.spanelBaseUrl+"uploaded/"+filename;
+       				}else if(type.equalsIgnoreCase("1") || type.equalsIgnoreCase("Panel")){
+       					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;
+       					uploadFile=ApiCons.panelBaseUrl+"uploaded/"+filename;
+       				}
+       				 Path temp = Files.move
+   						        (Paths.get("/tmp/"+filename), 
+   						        Paths.get(fileurl));
+				        if(temp != null)
+				        {
+				            System.out.println("File renamed and moved successfully");
+				            BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+			        	 	bulkMismatchBeans.setId(id);
+			        	 	bulkMismatchBeans.setProcess("100%");
+			        	 	bulkMismatchBeans.setResponse_msg("Completed all process");
+							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setRun_status(0);
+						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+				           
+				        }
+				        else
+				        {
+				            System.out.println("Failed to move the file");
+				            
+						    System.out.println("File renamed and moved successfully");
+				            BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+			        	 	bulkMismatchBeans.setId(id);
+			        	 	bulkMismatchBeans.setProcess("75%");
+			        	 	bulkMismatchBeans.setResponse_msg("not uploaded your file to mysql");
+							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setRun_status(0);
+						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+				        } 
+				        JSONObject jobj = new JSONObject();
+	       		    	jobj.put("truncatestatus", truncatestatus);
 	       		    	jobj.put("upload_file_status", upload_file_status);
 	       		    	jobj.put("filename", "uploaded/"+filename);
 	       		    	out.println(jobj.toString());

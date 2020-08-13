@@ -65,6 +65,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
+import all.beans.BulkMismatchBeans;
 import all.beans.Count_sms_user;
 import all.beans.Count_sms_user1;
 import all.beans.Pojo_Count_Submitted;
@@ -7133,7 +7134,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7251,7 +7252,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7807,6 +7808,319 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 
 				   	}
 					
+					
+				   
+				   }
+				public int createMisDlranalTable(String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	int i=0;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String sql = "create table misdlranal(MobileNumber varchar(12),SubmitDate datetime,DoneDate datetime,AliasMessageId varchar(36),SenderId varchar(10),MessageId varchar(36),status varchar(50),CompanyId int(10) unsigned NOT NULL,GatewayId int(10) unsigned NOT NULL,ErrorCode varchar(50),matched varchar(10));"; 
+
+				        i=stmt.executeUpdate(sql);
+				        if(i>0) {
+				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+				        	 	bulkMismatchBeans.setId(id);
+								bulkMismatchBeans.setProcess("10%");
+								bulkMismatchBeans.setResponse_msg("Created tables");
+								bulkMismatchBeans.setFile("");
+								bulkMismatchBeans.setRun_status(1);
+							    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+				        }
+		                
+				     }catch(Exception e){
+				    	 Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				    	 BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+			        	 	bulkMismatchBeans.setId(id);
+							bulkMismatchBeans.setProcess("0%");
+							bulkMismatchBeans.setResponse_msg("Not Create Table "+e.getMessage());
+							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setRun_status(0);
+						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+						 
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return i;
+					
+				   
+				   }
+				public void callApiBulkMismatch(BulkMismatchBeans bulkMismatchBeans) {
+					
+					    	String jsonData="";
+							try {
+								HttpResponse<JsonNode> response = Unirest.post(ApiCons.cwcBaseUrl+"get_bulk_mismatch")
+										.header("Content-Type", "application/x-www-form-urlencoded")
+										.field("id", bulkMismatchBeans.getId())
+										.field("process", bulkMismatchBeans.getProcess())
+										.field("response_msg", bulkMismatchBeans.getResponse_msg())
+										.field("file", bulkMismatchBeans.getFile())
+										.field("run_status", bulkMismatchBeans.getRun_status())
+										.asJson();
+								//jsonData=response.getBody().toString();
+							} catch (UnirestException e) {
+								e.printStackTrace();
+							}
+					      
+					
+					
+				}
+				public int alterBulkMisTable(String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	int i=0;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String sql = "alter table misdlranal ADD index(MobileNumber,SubmitDate,DoneDate,AliasMessageId,SenderId,STATUS,MessageId,CompanyId,GatewayId,ErrorCode,matched);"; 
+				       i=stmt.executeUpdate(sql);
+				        if(i>0) {
+				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+			        	 	bulkMismatchBeans.setId(id);
+							bulkMismatchBeans.setProcess("15%");
+							bulkMismatchBeans.setResponse_msg("Alter tables");
+							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setRun_status(1);
+						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+				        	 
+				        }
+		               
+				      
+				       //logger.info("delivered query"+query);
+				       
+				     }catch(Exception e){
+				    	 Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				    	 BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+			        	 	bulkMismatchBeans.setId(id);
+							bulkMismatchBeans.setProcess("10%");
+							bulkMismatchBeans.setResponse_msg("not Alter tables "+e.getMessage());
+							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setRun_status(0);
+						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+			        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+			        	 
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return i;
+					
+				   
+				   }
+				public int insertBulkMis(String id, String preDate, String currentDate, String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						  ps=conn.prepareStatement("insert into misdlranal(MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode) select MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode from sentbox partition("+currentDate+") where AliasMessageId not in(select AliasMessageId from inbounddlr partition("+currentDate+"));");
+						  i= ps.executeUpdate();
+						  
+						  if(i>0) {
+					        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+				        	 	bulkMismatchBeans.setId(id);
+								bulkMismatchBeans.setProcess("50%");
+								bulkMismatchBeans.setResponse_msg("Inserted data");
+								bulkMismatchBeans.setFile("");
+								bulkMismatchBeans.setRun_status(1);
+							    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+					        	 
+					        }else {
+						        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+					        	 	bulkMismatchBeans.setId(id);
+									bulkMismatchBeans.setProcess("15%");
+									bulkMismatchBeans.setResponse_msg("Failed Insert data");
+									bulkMismatchBeans.setFile("");
+									bulkMismatchBeans.setRun_status(1);
+								    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+						        	 
+						       
+					        }
+					}
+					catch(Exception e)
+					{
+						BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+		        	 	bulkMismatchBeans.setId(id);
+						bulkMismatchBeans.setProcess("15%");
+						bulkMismatchBeans.setResponse_msg("Failed Insert data" +e.getMessage());
+						bulkMismatchBeans.setFile("");
+						bulkMismatchBeans.setRun_status(0);
+					    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public int updateBulkMis(String id, String preDate, String currentDate, String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						  ps=conn.prepareStatement("update misdlranal,inbounddlr partition("+preDate+","+currentDate+","+nextDate+") set misdlranal.matched='yes' where misdlranal.AliasMessageId=inbounddlr.AliasMessageId;");
+						  i= ps.executeUpdate();
+						  
+						  if(i>0) {
+					        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+				        	 	bulkMismatchBeans.setId(id);
+								bulkMismatchBeans.setProcess("75%");
+								bulkMismatchBeans.setResponse_msg("Updated data");
+								bulkMismatchBeans.setFile("");
+								bulkMismatchBeans.setRun_status(1);
+							    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+					        	 
+					        }else {
+						        	BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+					        	 	bulkMismatchBeans.setId(id);
+									bulkMismatchBeans.setProcess("50%");
+									bulkMismatchBeans.setResponse_msg("Failed Update data");
+									bulkMismatchBeans.setFile("");
+									bulkMismatchBeans.setRun_status(1);
+								    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+						        	 
+						       
+					        }
+					}
+					catch(Exception e)
+					{
+						BulkMismatchBeans bulkMismatchBeans=new BulkMismatchBeans();
+		        	 	bulkMismatchBeans.setId(id);
+						bulkMismatchBeans.setProcess("50%");
+						bulkMismatchBeans.setResponse_msg("Failed Update data" +e.getMessage());
+						bulkMismatchBeans.setFile("");
+						bulkMismatchBeans.setRun_status(0);
+					    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public boolean uploadBulkMisFile(String filename, String id) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	boolean upload_file_status=false;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId,count(*) into outfile '/tmp/"+filename+"' fields terminated by ',' from misdlranal,report.iddetails where misdlranal.matched is null and misdlranal.CompanyId=report.iddetails.CompanyId group by GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId ;";
+				       rs = stmt.executeQuery(query);
+				      // int i = stmt.executeUpdate(query);
+				      
+				       
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return upload_file_status;
 					
 				   
 				   }
