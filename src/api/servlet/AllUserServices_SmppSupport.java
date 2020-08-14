@@ -1202,6 +1202,10 @@ public class AllUserServices_SmppSupport extends HttpServlet {
            	  		int alert_i=daoImpl.alterTable(table,id);
            	  		boolean load_data_status=daoImpl.LoadSentBoxDateFile(table,id);
            	  		int update_i=daoImpl.updateSendBoxtable(table,id,currentDate,preDate,nextDate);
+           	  		int update_i2=daoImpl.updateSendBoxtable2(table,id,currentDate,preDate,nextDate);
+           	  		int update_i3=daoImpl.updateSendBoxtable3(table,id,currentDate,preDate,nextDate);
+           	  		int update_i4=daoImpl.updateSendBoxtable4(table,id,currentDate,preDate,nextDate);
+           	  		int update_i5=daoImpl.updateSendBoxtable5(table,id,currentDate,preDate,nextDate);
            	  		
            	  	boolean upload_file_status=daoImpl.uploadSentBoxFile(filename,table,id);
            	  	String uploadFile="";
@@ -1223,6 +1227,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 				        if(temp != null)
 				        {
 				            System.out.println("File renamed and moved successfully");
+				            System.out.println(uploadFile);
 				            SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
 				            boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("7");

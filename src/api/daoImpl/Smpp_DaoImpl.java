@@ -6342,7 +6342,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="drop table "+table+";";
-		               
+		               System.out.println(query);
 				        stmt.executeUpdate(query);
 				      
 				       //logger.info("delivered query"+query);
@@ -7461,8 +7461,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String sql = "create table "+table+" (AliasMessageId varchar(136));"; 
-
+				       String sql = "create table "+table+" (AliasMessageId varchar(36));"; 
+				       System.out.println(sql);
 				        i=stmt.executeUpdate(sql);
 				        if(i>0) {
 				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
@@ -7485,7 +7485,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 						 	boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("0");
 							boxBulkFiles.setProcess("10%");
-							boxBulkFiles.setStatus_msg("not create table");
+							boxBulkFiles.setStatus_msg("not create table"+e.getMessage());
 							boxBulkFiles.setGet_file("");
 							boxBulkFiles.setRun_status("0");
 						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
@@ -7518,10 +7518,57 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String sql = "alter table "+table+" add (MobileNumber varchar(12),SenderId varchar(10),MessageId varchar(36),SentbStatus varchar(50),DLRStatus varchar(50),ErrorCode varchar(20),AccountId varchar(10),GatewayId varchar(10),SentDate datetime,RecvDate datetime,TimeDiff varchar(10),Message varchar(100));"; 
+				       String sql = "alter table dummy_table add (MobileNumber varchar(12),SenderId varchar(10),MessageId varchar(36),SentbStatus varchar(50),DLRStatus varchar(50),ErrorCode varchar(20),AccountId varchar(10),GatewayId varchar(10),SentDate datetime,RecvDate datetime,TimeDiff varchar(10),Message varchar(100));"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				        sql = "alter table dummy_table add index(MobileNumber);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       sql = "alter table dummy_table add index(AliasMessageId);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       sql = "alter table dummy_table add index(MessageId);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(DLRStatus);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(ErrorCode);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(SenderId);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(RecvDate);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(GatewayId);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(Message);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(SentbStatus);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(SentDate);"; 
+				       System.out.println(sql);
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table dummy_table add index(RecvDate);"; 
+				       System.out.println(sql);
 				       i=stmt.executeUpdate(sql);
 				        sql = "alter table "+table+" add index(MobileNumber,AliasMessageId,MessageId,DLRStatus,ErrorCode,SenderId,RecvDate,GatewayId,Message,SentbStatus,SentDate,AccountId);"; 
-				       i=stmt.executeUpdate(sql);
+				        System.out.println(sql);
+				        i=stmt.executeUpdate(sql);
 				        if(i>0) {
 				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
 				        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
@@ -7531,6 +7578,16 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 								boxBulkFiles.setStatus_msg("Alter tables");
 								boxBulkFiles.setGet_file("");
 								boxBulkFiles.setRun_status("1");
+							    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				        }else {
+				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+				        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("15%");
+								boxBulkFiles.setStatus_msg("not Alter tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
 							    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
 				        }
 		               
@@ -7543,7 +7600,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 						 	boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("0");
 							boxBulkFiles.setProcess("15%");
-							boxBulkFiles.setStatus_msg("not Alter tables");
+							boxBulkFiles.setStatus_msg("not Alter tables"+e.getMessage());
 							boxBulkFiles.setGet_file("");
 							boxBulkFiles.setRun_status("0");
 						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
@@ -7579,26 +7636,37 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       stmt=connection.createStatement();
 				       String query="load data local infile '/home/dummy_file.txt' into table "+table+" (AliasMessageId);";
 				       //String query="load data local infile 'C://Users//Dell//Desktop//VNS War file//CWC//dummy_file.txt' into table "+table+" (AliasMessageId);";
-		              
+				       System.out.println(query);
 				       int i = stmt.executeUpdate(query);
-				      
+				       if(i>0) {
+				    	   SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("5");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("Loaded files");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("1");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				       }else {
+				    	   SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("25%");
+							boxBulkFiles.setStatus_msg("Failed lod file");
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				       }
 				       //logger.info("delivered query"+query);
 				       
 				       	
-				        SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
-					 	boxBulkFiles.setId(id);
-						boxBulkFiles.setStatus("5");
-						boxBulkFiles.setProcess("45%");
-						boxBulkFiles.setStatus_msg("Loaded files");
-						boxBulkFiles.setGet_file("");
-						boxBulkFiles.setRun_status("1");
-						daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+				       
 				     }catch(Exception e){
 				    	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
 						 	boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("0");
 							boxBulkFiles.setProcess("25%");
-							boxBulkFiles.setStatus_msg("Failed lod file");
+							boxBulkFiles.setStatus_msg("Failed lod file "+ e.getMessage());
 							boxBulkFiles.setGet_file("");
 							boxBulkFiles.setRun_status("0");
 						    daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
@@ -7635,23 +7703,28 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					{
 						stmt=conn.createStatement();
 						  ps=conn.prepareStatement("update "+table+",sentbox partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".GatewayId=sentbox.GatewayId,"+table+".MessageId=sentbox.MessageId,"+table+".MobileNumber=sentbox.MobileNumber,"+table+".AccountId=sentbox.AccountId,"+table+".SentDate=sentbox.SubmitDate,"+table+".SentbStatus=sentbox.Status,"+table+".Message=sentbox.Message,"+table+".SenderId=sentbox.SenderId where "+table+".AliasMessageId=sentbox.AliasMessageId;");
+						  System.out.println(ps.toString());
 						  i= ps.executeUpdate();
-						  ps=conn.prepareStatement("update "+table+",inbounddlr partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".RecvDate=inbounddlr.DoneDate,"+table+".DLRStatus=inbounddlr.Status,"+table+".ErrorCode=inbounddlr.ErrorCode where "+table+".AliasMessageId=inbounddlr.AliasMessageId;");
-						  i= ps.executeUpdate();
-						  ps=conn.prepareStatement("update "+table+" set RecvDate=(date_add(RecvDate, interval 5.30 hour_minute));");
-						  i= ps.executeUpdate();
-						  ps=conn.prepareStatement("update "+table+" set SentDate=(date_add(SentDate, interval 5.30 hour_minute));");
-						  i= ps.executeUpdate();
-						  ps=conn.prepareStatement("update "+table+" set TimeDiff= TIMESTAMPDIFF(minute,dummy_table.SentDate,dummy_table.RecvDate);");
-						  i= ps.executeUpdate();
-						  SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
-						 	boxBulkFiles.setId(id);
-							boxBulkFiles.setStatus("6");
-							boxBulkFiles.setProcess("75%");
-							boxBulkFiles.setStatus_msg("Updated tables");
-							boxBulkFiles.setGet_file("");
-							boxBulkFiles.setRun_status("1");
-							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						  if(i>0) {
+							  boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("6");
+								boxBulkFiles.setProcess("70%");
+								boxBulkFiles.setStatus_msg("Updated tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }else {
+							
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("45%");
+								boxBulkFiles.setStatus_msg("failed Update tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }
+						 	
 					}
 					catch(Exception e)
 					{
@@ -7659,7 +7732,311 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 						 	boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("0");
 							boxBulkFiles.setProcess("45%");
-							boxBulkFiles.setStatus_msg("failed Update tables");
+							boxBulkFiles.setStatus_msg("failed Update tables "+e.getMessage());
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public int updateSendBoxtable2(String table, String id, String currentDate, String preDate,
+						String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						  ps=conn.prepareStatement("update "+table+",inbounddlr partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".RecvDate=inbounddlr.DoneDate,"+table+".DLRStatus=inbounddlr.Status,"+table+".ErrorCode=inbounddlr.ErrorCode where "+table+".AliasMessageId=inbounddlr.AliasMessageId;");
+						  System.out.println(ps.toString());
+						  i= ps.executeUpdate();
+						   SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						  if(i>0) {
+							  boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("6");
+								boxBulkFiles.setProcess("72%");
+								boxBulkFiles.setStatus_msg("Updated tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }else {
+							
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("45%");
+								boxBulkFiles.setStatus_msg("failed Update tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }
+						 	
+					}
+					catch(Exception e)
+					{
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("failed Update tables "+e.getMessage());
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public int updateSendBoxtable3(String table, String id, String currentDate, String preDate,
+						String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						 ps=conn.prepareStatement("update "+table+" set RecvDate=(date_add(RecvDate, interval 5.30 hour_minute));");
+						 System.out.println(ps.toString());
+						 i= ps.executeUpdate();
+						  SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						  if(i>0) {
+							  boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("6");
+								boxBulkFiles.setProcess("74%");
+								boxBulkFiles.setStatus_msg("Updated tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }else {
+							
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("45%");
+								boxBulkFiles.setStatus_msg("failed Update tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }
+						 	
+					}
+					catch(Exception e)
+					{
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("failed Update tables "+e.getMessage());
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public int updateSendBoxtable4(String table, String id, String currentDate, String preDate,
+						String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						  ps=conn.prepareStatement("update "+table+" set SentDate=(date_add(SentDate, interval 5.30 hour_minute));");
+						  System.out.println(ps.toString());
+						  i= ps.executeUpdate();
+						  SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						  if(i>0) {
+							  boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("6");
+								boxBulkFiles.setProcess("76%");
+								boxBulkFiles.setStatus_msg("Updated tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }else {
+							
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("45%");
+								boxBulkFiles.setStatus_msg("failed Update tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }
+						 	
+					}
+					catch(Exception e)
+					{
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("failed Update tables "+e.getMessage());
+							boxBulkFiles.setGet_file("");
+							boxBulkFiles.setRun_status("0");
+							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+							e.printStackTrace();
+					}
+					finally
+			        {
+			       	 try {
+			       	         if (conn != null)
+			       	      	conn.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	      try {
+			       	         if (stmt != null)
+			       	             stmt.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+
+			       	  
+			       	   try {
+			       	         if (rs != null)
+			       	        	 rs.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	  
+			       	   
+			       	   try {
+			       	         if (ps != null)
+			       	        	 ps.close();
+			       	      } catch (SQLException ignore) {} // no point handling
+			       	   
+			       	 }
+					return i;
+			  	  
+					
+				}
+				public int updateSendBoxtable5(String table, String id, String currentDate, String preDate,
+						String nextDate) {
+					Connection conn=DbConnection_Search.getInstance().getConnection();
+					Statement stmt=null;
+					ResultSet rs = null;
+					PreparedStatement  ps =  null;
+					Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+					int i=0;
+					try 
+					{
+						stmt=conn.createStatement();
+						 ps=conn.prepareStatement("update "+table+" set TimeDiff= TIMESTAMPDIFF(minute,dummy_table.SentDate,dummy_table.RecvDate);");
+						 System.out.println(ps.toString());
+						 i= ps.executeUpdate();
+						  SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						  if(i>0) {
+							  boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("6");
+								boxBulkFiles.setProcess("78%");
+								boxBulkFiles.setStatus_msg("Updated tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("1");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }else {
+							
+							 	boxBulkFiles.setId(id);
+								boxBulkFiles.setStatus("0");
+								boxBulkFiles.setProcess("45%");
+								boxBulkFiles.setStatus_msg("failed Update tables");
+								boxBulkFiles.setGet_file("");
+								boxBulkFiles.setRun_status("0");
+								daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+						  }
+						 	
+					}
+					catch(Exception e)
+					{
+						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+						 	boxBulkFiles.setId(id);
+							boxBulkFiles.setStatus("0");
+							boxBulkFiles.setProcess("45%");
+							boxBulkFiles.setStatus_msg("failed Update tables "+e.getMessage());
 							boxBulkFiles.setGet_file("");
 							boxBulkFiles.setRun_status("0");
 							daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
@@ -7703,6 +8080,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="select *  into outfile '/tmp/"+filename+"' fields terminated by ',' from "+table+" ;";
+				       System.out.println(query);
 				       rs = stmt.executeQuery(query);
 				      // int i = stmt.executeUpdate(query);
 				      
@@ -7771,6 +8149,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   }
 				public void getSpanFailureAnalysis(JSONArray jsonArray, String date) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
 				   String query="";
@@ -7876,7 +8255,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 										.field("file", bulkMismatchBeans.getFile())
 										.field("run_status", bulkMismatchBeans.getRun_status())
 										.asJson();
-								//jsonData=response.getBody().toString();
+								jsonData=response.getBody().toString();
 							} catch (UnirestException e) {
 								e.printStackTrace();
 							}
