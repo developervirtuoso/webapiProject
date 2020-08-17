@@ -1069,8 +1069,14 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
        			String date = request.getParameter("date");
-       			smpp_dao.getLastEntry1(jsonArray, date);
-       			smpp_dao.getLastEntry2(jsonArray, date);
+       			String sqlno = request.getParameter("sqlno");
+       			if(sqlno.equals("1")) {
+       				smpp_dao.getLastEntry1(jsonArray, date);
+       			}else if(sqlno.equals("2")) {
+       				smpp_dao.getLastEntry2(jsonArray, date);
+       			}
+       			
+       			
        			out.print(jsonArray.toString());
        			
        		}
@@ -1081,10 +1087,11 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			JSONArray jsonArray=new JSONArray();
        			String date = request.getParameter("date");
        			String sqlno = request.getParameter("sqlno");
+       			String type = request.getParameter("type");
        			if(sqlno.equals("1")) {
-       				smpp_dao.getGateWayAnalysis1(jsonArray, date);
+       				smpp_dao.getGateWayAnalysis1(jsonArray, date,type);
        			}else if(sqlno.equals("2")) {
-       				smpp_dao.getGateWayAnalysis2(jsonArray, date);
+       				smpp_dao.getGateWayAnalysis2(jsonArray, date,type);
        			}
        			out.print(jsonArray.toString());
        			
@@ -1096,17 +1103,27 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			JSONArray jsonArray=new JSONArray();
        			String date = request.getParameter("date");
        			String sqlno = request.getParameter("sqlno");
+       			String type = request.getParameter("type");
+       			String panel="1";
+       			if(type.equals("1")) {
+       				panel="1";
+       			}else if(type.equals("2")) {
+       				panel="2";
+       			}else if(type.equals("3")) {
+       				panel="3";
+       			}
        			String sql="";
        			if(sqlno.equals("1")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"' ) and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("2")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("3")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("4")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
        			}else if(sqlno.equals("5")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
+       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
        			}
        			smpp_dao.getFailureAnalysis(jsonArray, sql);
        			out.print(jsonArray.toString());
@@ -1307,7 +1324,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 			        	 	bulkMismatchBeans.setId(id);
 			        	 	bulkMismatchBeans.setProcess("100%");
 			        	 	bulkMismatchBeans.setResponse_msg("Completed all process");
-							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setFile(uploadFile);
 							bulkMismatchBeans.setRun_status(0);
 						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
 				           
@@ -1321,7 +1338,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 			        	 	bulkMismatchBeans.setId(id);
 			        	 	bulkMismatchBeans.setProcess("75%");
 			        	 	bulkMismatchBeans.setResponse_msg("not uploaded your file to mysql");
-							bulkMismatchBeans.setFile("");
+							bulkMismatchBeans.setFile(uploadFile);
 							bulkMismatchBeans.setRun_status(0);
 						    daoImpl.callApiBulkMismatch(bulkMismatchBeans);
 				        } 

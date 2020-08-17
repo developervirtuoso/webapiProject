@@ -7126,7 +7126,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   
 				}
-				public void getGateWayAnalysis1(JSONArray jsonArray, String date) {
+				public void getGateWayAnalysis1(JSONArray jsonArray, String date, String type) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -7134,7 +7134,14 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+				       if(type.equals("1")) {
+				    	   query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '1' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						}else if(type.equals("2")) {
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '2' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						}else if(type.equals("3")) {
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '3' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						}
+	                    
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7244,7 +7251,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
-				public void getGateWayAnalysis2(JSONArray jsonArray, String date) {
+				public void getGateWayAnalysis2(JSONArray jsonArray, String date, String type) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -7252,8 +7259,14 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where (report.giddetails.serverid like '1' or report.giddetails.serverid like '2' or report.giddetails.serverid like '3') and inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
-		               rs = stmt.executeQuery(query);
+				       if(type.equals("1")) {
+				    	   query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where report.giddetails.serverid like '1' and inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						}else if(type.equals("2")) {
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where report.giddetails.serverid like '2' and inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						}else if(type.equals("3")) {
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from inbounddlr partition ("+date+"),report.giddetails where report.giddetails.serverid like '3' and inbounddlr.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+						} 
+				       rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
 		                    JSONObject jsonObject=new JSONObject();
@@ -7563,12 +7576,10 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       System.out.println(sql);
 				       i=stmt.executeUpdate(sql);
 				       
-				       sql = "alter table dummy_table add index(RecvDate);"; 
+				       sql = "alter table dummy_table add index(SentDate);"; 
 				       System.out.println(sql);
 				       i=stmt.executeUpdate(sql);
-				        sql = "alter table "+table+" add index(MobileNumber,AliasMessageId,MessageId,DLRStatus,ErrorCode,SenderId,RecvDate,GatewayId,Message,SentbStatus,SentDate,AccountId);"; 
-				        System.out.println(sql);
-				        i=stmt.executeUpdate(sql);
+				      
 				        if(i>0) {
 				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
 				        	 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
@@ -8198,7 +8209,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String sql = "create table misdlranal(MobileNumber varchar(12),SubmitDate datetime,DoneDate datetime,AliasMessageId varchar(36),SenderId varchar(10),MessageId varchar(36),status varchar(50),CompanyId int(10) unsigned NOT NULL,GatewayId int(10) unsigned NOT NULL,ErrorCode varchar(50),matched varchar(10));"; 
+				       String sql = "create table misdlranal(MobileNumber varchar(12),SubmitDate datetime,DoneDate datetime,AliasMessageId varchar(36),SenderId varchar(10),MessageId varchar(36),status varchar(50),CompanyId int(10) unsigned NOT NULL,GatewayId int(10) unsigned NOT NULL,ErrorCode varchar(50));"; 
 
 				        i=stmt.executeUpdate(sql);
 				        if(i>0) {
@@ -8271,7 +8282,39 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String sql = "alter table misdlranal ADD index(MobileNumber,SubmitDate,DoneDate,AliasMessageId,SenderId,STATUS,MessageId,CompanyId,GatewayId,ErrorCode,matched);"; 
+				       String sql = "alter table misdlranal add column matched varchar(10);"; 
+				       i=stmt.executeUpdate(sql);
+				       sql = "alter table misdlranal add index(MobileNumber);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(SubmitDate);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(DoneDate);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(AliasMessageId);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(SenderId);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(status);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(MessageId);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(CompanyId);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(GatewayId);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(ErrorCode);"; 
+				       i=stmt.executeUpdate(sql);
+				       
+				       sql = "alter table misdlranal add index(matched);"; 
 				       i=stmt.executeUpdate(sql);
 				        if(i>0) {
 				        	Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
@@ -8476,7 +8519,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId,count(*) into outfile '/tmp/"+filename+"' fields terminated by ',' from misdlranal,report.iddetails where misdlranal.matched is null and misdlranal.CompanyId=report.iddetails.CompanyId group by GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId ;";
+				       String query="select GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId,count(*) as count into outfile '/tmp/"+filename+"' fields terminated by ',' from misdlranal,report.iddetails where misdlranal.matched is null and misdlranal.CompanyId=report.iddetails.CompanyId group by GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId ;";
 				       rs = stmt.executeQuery(query);
 				      // int i = stmt.executeUpdate(query);
 				      
