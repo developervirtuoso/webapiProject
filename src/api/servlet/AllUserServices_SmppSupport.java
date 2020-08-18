@@ -1491,10 +1491,47 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        	        	e.printStackTrace();
        	        }
        	    }
-    	
-             
-    	
-    	
+           //################################################################### checkingCharset  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("checkingCharset")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			String type = request.getParameter("type");
+       			String value = request.getParameter("value");
+       			smpp_dao.getCheckingCharset(jsonArray, date,type,value);
+       			out.print(jsonArray.toString());
+       		}
+           //################################################################### getSubDlrReport  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getSubDlrReport")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			JSONArray subJsonArray=new JSONArray();
+       			JSONArray dlrJsonArray=new JSONArray();
+       			String fromDate = request.getParameter("fromDate");
+       			String toDate = request.getParameter("toDate");
+       			smpp_dao.getSubReport(subJsonArray, fromDate,toDate);
+       			smpp_dao.getDlrReport(dlrJsonArray, fromDate,toDate);
+       			jsonObject.put("sub", subJsonArray);
+       			jsonObject.put("dlr", dlrJsonArray);
+       			out.print(jsonObject.toString());
+       		}
+           //################################################################### getSubDlrReportWithName195  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getSubDlrReportWithName195")) 
+       		{
+       			String fromDate = request.getParameter("fromDate");
+       			String toDate = request.getParameter("toDate");
+       			String name = request.getParameter("name");
+       			System.out.println("fromDate==>"+fromDate);
+       			System.out.println("toDate==>"+toDate);
+       			System.out.println("name==>"+name);
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			smpp_dao.getSubDlrReportWithName195(jsonArray,fromDate,toDate,name);
+       			out.print(jsonArray.toString());
+       			
+       		}
     }
 
 	/**

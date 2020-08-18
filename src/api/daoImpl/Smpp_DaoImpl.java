@@ -8546,5 +8546,171 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getCheckingCharset(JSONArray jsonArray, String date, String type, String value) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       if(type.equals("1")) {
+				    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='1' group by report.giddetails.gatewayname;";
+						}else if(type.equals("2")) {
+					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='2' group by report.giddetails.gatewayname;";
+						}else if(type.equals("3")) {
+					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='3' group by report.giddetails.gatewayname;";
+						}
+	                    
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getSubReport(JSONArray subJsonArray, String fromDate, String toDate) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select userdetails.username as AccountName,sum(count) as count from userdetails,tbl_submitted where userdetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("AccountName"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		subJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getDlrReport(JSONArray dlrJsonArray, String fromDate, String toDate) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select userdetails.username as AccountName,sum(count) as count from userdetails,tbl_delivered where errorcode like '0' and userdetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("AccountName"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		dlrJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getSubDlrReportWithName195(JSONArray jsonArray, String fromDate, String toDate,
+						String name) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(6);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis4 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName ;";
+		               System.out.println("query==>"+query);
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("sub", rs.getString("sub"));
+				       		jsonObject.put("del", rs.getString("del"));
+				       		jsonObject.put("accountName", rs.getString("AccountName"));
+				       		jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
 				
 }
