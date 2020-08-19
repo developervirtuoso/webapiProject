@@ -1511,11 +1511,34 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			JSONArray dlrJsonArray=new JSONArray();
        			String fromDate = request.getParameter("fromDate");
        			String toDate = request.getParameter("toDate");
-       			smpp_dao.getSubReport(subJsonArray, fromDate,toDate);
-       			smpp_dao.getDlrReport(dlrJsonArray, fromDate,toDate);
+       			String type = request.getParameter("type");
+       			smpp_dao.getSubReport(subJsonArray, fromDate,toDate,type);
+       			smpp_dao.getDlrReport(dlrJsonArray, fromDate,toDate,type);
        			jsonObject.put("sub", subJsonArray);
        			jsonObject.put("dlr", dlrJsonArray);
        			out.print(jsonObject.toString());
+       		}
+           //################################################################### errorSubCodeByCompanyidAndDate  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("errorSubCodeByCompanyidAndDate")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String fromDate = request.getParameter("fromDate");
+       			String toDate = request.getParameter("toDate");
+       			String companyid = request.getParameter("companyid");
+       			smpp_dao.getSubErrorCodeByCompanyIdAndDate(jsonArray, fromDate,toDate,companyid);
+       			out.print(jsonArray.toString());
+       		}
+           //################################################################### errorDelCodeByCompanyidAndDate  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("errorDelCodeByCompanyidAndDate")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String fromDate = request.getParameter("fromDate");
+       			String toDate = request.getParameter("toDate");
+       			String companyid = request.getParameter("companyid");
+       			smpp_dao.getDelErrorCodeByCompanyIdAndDate(jsonArray, fromDate,toDate,companyid);
+       			out.print(jsonArray.toString());
        		}
            //################################################################### getSubDlrReportWithName195  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("getSubDlrReportWithName195")) 
@@ -1523,12 +1546,13 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String fromDate = request.getParameter("fromDate");
        			String toDate = request.getParameter("toDate");
        			String name = request.getParameter("name");
+       			String type = request.getParameter("type");
        			System.out.println("fromDate==>"+fromDate);
        			System.out.println("toDate==>"+toDate);
        			System.out.println("name==>"+name);
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
-       			smpp_dao.getSubDlrReportWithName195(jsonArray,fromDate,toDate,name);
+       			smpp_dao.getSubDlrReportWithName195(jsonArray,fromDate,toDate,name,type);
        			out.print(jsonArray.toString());
        			
        		}

@@ -8593,7 +8593,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
-				public void getSubReport(JSONArray subJsonArray, String fromDate, String toDate) {
+				public void getSubReport(JSONArray subJsonArray, String fromDate, String toDate, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -8601,7 +8601,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select userdetails.username as AccountName,sum(count) as count from userdetails,tbl_submitted where userdetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+				       String query="select userdetails.username as AccountName,sum(count) as count,userdetails.companyid as companyid from userdetails,tbl_submitted where userdetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8609,6 +8609,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		JSONObject jsonObject=new JSONObject();
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
 				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("type",type);
 				       		subJsonArray.put(jsonObject);
 				       }
 				     }catch(Exception e){
@@ -8632,7 +8634,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
-				public void getDlrReport(JSONArray dlrJsonArray, String fromDate, String toDate) {
+				public void getDlrReport(JSONArray dlrJsonArray, String fromDate, String toDate, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -8640,7 +8642,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select userdetails.username as AccountName,sum(count) as count from userdetails,tbl_delivered where errorcode like '0' and userdetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+				       String query="select userdetails.username as AccountName,sum(count) as count,userdetails.companyid as companyid from userdetails,tbl_delivered where errorcode like '0' and userdetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8648,6 +8650,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		JSONObject jsonObject=new JSONObject();
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
 				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("type",type);
 				       		dlrJsonArray.put(jsonObject);
 				       }
 				     }catch(Exception e){
@@ -8672,7 +8676,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   }
 				public void getSubDlrReportWithName195(JSONArray jsonArray, String fromDate, String toDate,
-						String name) {
+						String name, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(6);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -8688,7 +8692,90 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		JSONObject jsonObject=new JSONObject();
 				       		jsonObject.put("sub", rs.getString("sub"));
 				       		jsonObject.put("del", rs.getString("del"));
+				       		jsonObject.put("type",type);
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
+				       		jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getSubErrorCodeByCompanyIdAndDate(JSONArray subJsonArray, String fromDate, String toDate,
+						String companyid) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select s.count as count,s.errorcode,e.Description   from tbl_submitted s left join errorcode e on s.errorcode=e.Error_Code  where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+"  and s.errorcode!=0;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("errorcode", rs.getString("errorcode"));
+				       		jsonObject.put("description", rs.getString("Description")+"");
+				       		subJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getDelErrorCodeByCompanyIdAndDate(JSONArray jsonArray, String fromDate, String toDate,
+						String companyid) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select s.count as count,s.errorcode, e.Description   from tbl_delivered s  left join errorcode e on s.errorcode=e.Error_Code where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+"  and s.errorcode!=0;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("errorcode", rs.getString("errorcode"));
+				       		jsonObject.put("description", rs.getString("Description")+"");
 				       		jsonArray.put(jsonObject);
 				       }
 				     }catch(Exception e){
