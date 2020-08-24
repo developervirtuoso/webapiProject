@@ -1494,12 +1494,14 @@ public class AllUserServices_SmppSupport extends HttpServlet {
            //################################################################### checkingCharset  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("checkingCharset")) 
        		{
+
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
        			String date = request.getParameter("date");
        			String type = request.getParameter("type");
        			String value = request.getParameter("value");
-       			smpp_dao.getCheckingCharset(jsonArray, date,type,value);
+       			System.out.println("valuevalue 11 ==>"+value);
+       			//smpp_dao.getCheckingCharset(jsonArray, date,type,value);
        			out.print(jsonArray.toString());
        		}
            //################################################################### getSubDlrReport  ###################################################################// 	

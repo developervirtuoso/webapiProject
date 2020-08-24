@@ -8561,7 +8561,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 						}else if(type.equals("3")) {
 					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='3' group by report.giddetails.gatewayname;";
 						}
-	                    
+	                    System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
