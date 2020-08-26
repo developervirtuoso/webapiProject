@@ -1549,14 +1549,31 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String toDate = request.getParameter("toDate");
        			String name = request.getParameter("name");
        			String type = request.getParameter("type");
-       			System.out.println("fromDate==>"+fromDate);
-       			System.out.println("toDate==>"+toDate);
-       			System.out.println("name==>"+name);
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
        			smpp_dao.getSubDlrReportWithName195(jsonArray,fromDate,toDate,name,type);
        			out.print(jsonArray.toString());
        			
+       		}
+           //################################################################### getGatewayDetails  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getGatewayDetails")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String serverid = request.getParameter("serverid");
+       			String type = request.getParameter("type");
+       			smpp_dao.getGatewayDetails(jsonArray, serverid,type);
+       			out.print(jsonArray.toString());
+       		}
+           //################################################################### getAccountDetails  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getAccountDetails")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String serverid = request.getParameter("serverid");
+       			String type = request.getParameter("type");
+       			smpp_dao.getAccountDetails(jsonArray, serverid,type);
+       			out.print(jsonArray.toString());
        		}
     }
 

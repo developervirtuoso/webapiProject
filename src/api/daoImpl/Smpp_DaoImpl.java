@@ -8684,8 +8684,15 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis4 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName ;";
-		               System.out.println("query==>"+query);
+				       String query="";
+				       if(type.equals("195-4")) {
+				    	   	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis4 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";
+			           }else if(type.equals("195-5")){
+			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis5 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";   
+				       }else if(type.equals("195-6")){
+			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis6 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";   
+				       }
+				       System.out.println("query==>"+query);
 				       rs = stmt.executeQuery(query);
 				      
 				       	while (rs.next()) {
@@ -8726,7 +8733,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select s.count as count,s.errorcode,e.Description   from tbl_submitted s left join errorcode e on s.errorcode=e.Error_Code  where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+"  and s.errorcode!=0;";
+				       String query="select s.count as count,s.errorcode,e.Description   from tbl_submitted s left join errorcode e on s.errorcode=e.Error_Code  where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" ;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8767,7 +8774,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select s.count as count,s.errorcode, e.Description   from tbl_delivered s  left join errorcode e on s.errorcode=e.Error_Code where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+"  and s.errorcode!=0;";
+				       String query="select s.count as count,s.errorcode, e.Description   from tbl_delivered s  left join errorcode e on s.errorcode=e.Error_Code where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" ;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8776,6 +8783,95 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("count", rs.getString("count"));
 				       		jsonObject.put("errorcode", rs.getString("errorcode"));
 				       		jsonObject.put("description", rs.getString("Description")+"");
+				       		jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getGatewayDetails(JSONArray jsonArray, String serverid, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select * from report.giddetails where serverid="+serverid+";";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("gatewayname", rs.getString("gatewayname"));
+				       		jsonObject.put("serverid", rs.getString("serverid"));
+				       		jsonObject.put("tps", rs.getString("TPS"));
+				       		jsonObject.put("username",rs.getString("username"));
+				       		jsonObject.put("ip",rs.getString("IP"));
+				       		jsonObject.put("gatewayid",rs.getString("gatewayid"));
+				       		jsonObject.put("type",type);
+				       		jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getAccountDetails(JSONArray jsonArray, String serverid, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select * from report.iddetails where serverid="+serverid+";";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("id", rs.getString("id"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("serverid", rs.getString("serverid"));
+				       		jsonObject.put("username",rs.getString("username"));
+				       		jsonObject.put("companyname",rs.getString("companyname"));
+				       		jsonObject.put("team",rs.getString("team"));
+				       		jsonObject.put("userid",rs.getString("userid"));
+				       		jsonObject.put("type",type);
 				       		jsonArray.put(jsonObject);
 				       }
 				     }catch(Exception e){
