@@ -8686,11 +8686,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       stmt=connection.createStatement();
 				       String query="";
 				       if(type.equals("195-4")) {
-				    	   	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis4 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";
+				    	   	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis4 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName = '"+name+"' group by AccountName;";
 			           }else if(type.equals("195-5")){
-			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis5 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";   
+			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis5 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName = '"+name+"' group by AccountName;";   
 				       }else if(type.equals("195-6")){
-			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis6 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName like '%"+name+"%' group by AccountName;";   
+			            	query="select sum(total_submitted) as sub,sum(Total_delivered) as del,AccountName from table_for_analysis6 where IndianDatetime between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and AccountName = '"+name+"' group by AccountName;";   
 				       }
 				       System.out.println("query==>"+query);
 				       rs = stmt.executeQuery(query);
@@ -8733,7 +8733,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select s.count as count,s.errorcode,e.Description   from tbl_submitted s left join errorcode e on s.errorcode=e.Error_Code  where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" ;";
+				       String query="select sum(s.count) as count,s.errorcode,e.Description   from tbl_submitted s left join errorcode e on s.errorcode=e.Error_Code  where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" group by s.errorcode;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8774,7 +8774,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select s.count as count,s.errorcode, e.Description   from tbl_delivered s  left join errorcode e on s.errorcode=e.Error_Code where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" ;";
+				       String query="select sum(s.count) as count,s.errorcode,e.Description  from tbl_delivered s left join errorcode e on s.errorcode=e.Error_Code where  s.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) and s.companyid ="+companyid+" group by s.errorcode;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8892,6 +8892,177 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 
 				   	}
+					
+				   
+				   }
+				public void getDateMismatchAnalysisSubmitDate_submission(String date, String type, JSONArray submitDateJson) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from sentbox partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+
+				      
+	                    System.out.println("query==>"+query);
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("substr", rs.getString("substr"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    submitDateJson.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getDateMismatchAnalysisDoneDate_submission(String date, String type,
+						JSONArray doneDateJson) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from sentbox partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+
+				      
+	                    System.out.println("query==>"+query);
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("substr", rs.getString("substr"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    doneDateJson.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getDateMismatchAnalysisSubmitDate_delivered(String date, String type,
+						JSONArray submitDateJson) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*)	as count from inbounddlr partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   System.out.println("query==>"+query);
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("substr", rs.getString("substr"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    submitDateJson.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getDateMismatchAnalysisDoneDate_delivered(String date, String type,
+						JSONArray doneDateJson) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from inbounddlr partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   System.out.println("query==>"+query);
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("substr", rs.getString("substr"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    doneDateJson.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
 					
 				   
 				   }

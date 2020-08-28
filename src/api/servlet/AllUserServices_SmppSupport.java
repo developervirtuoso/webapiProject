@@ -1501,8 +1501,31 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String type = request.getParameter("type");
        			String value = request.getParameter("value");
        			System.out.println("valuevalue 11 ==>"+value);
-       			//smpp_dao.getCheckingCharset(jsonArray, date,type,value);
+       			smpp_dao.getCheckingCharset(jsonArray, date,type,value);
        			out.print(jsonArray.toString());
+       		}
+           //################################################################### dateMismatchAnalysis  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("dateMismatchAnalysis")) 
+       		{
+
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			JSONArray submitDateJson=new JSONArray();
+       			JSONArray doneDateJson=new JSONArray();
+       			String date = request.getParameter("date");
+       			String type = request.getParameter("type");
+       			String sqlno = request.getParameter("sqlno");
+       			if(sqlno.equals("1")) {
+       				smpp_dao.getDateMismatchAnalysisSubmitDate_submission(date,type,submitDateJson);
+       				smpp_dao.getDateMismatchAnalysisDoneDate_submission(date,type,doneDateJson);
+       				
+       			}else if(sqlno.equals("2")) {
+       				smpp_dao.getDateMismatchAnalysisSubmitDate_delivered(date,type,submitDateJson);
+       				smpp_dao.getDateMismatchAnalysisDoneDate_delivered(date,type,doneDateJson);
+       			}
+       			jsonObject.put("submitDate", submitDateJson);
+       			jsonObject.put("doneDone", doneDateJson);
+       			out.print(jsonObject.toString());
        		}
            //################################################################### getSubDlrReport  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("getSubDlrReport")) 
