@@ -1472,6 +1472,24 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        	        	e.printStackTrace();
        	        }
        	    }
+             //################################################################### fetch_tps_by_panel_hours  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("fetch_tps_by_panel_hours")) 
+       		{
+       			try {	
+       				Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       				String date_p =request.getParameter("date_p");
+       				String date =request.getParameter("date");
+       				String companyName =request.getParameter("companyName");
+       				String count =request.getParameter("count");
+       				String tps_by =request.getParameter("tps_by");
+           			JSONArray jsonArray=new JSONArray();
+           			smpp_dao.getTpcDatabyPanelHours(jsonArray,date,date_p,companyName,count,tps_by);
+           			out.print(jsonArray.toString());
+       	    	        	    	
+       	     }catch(Exception e){
+       	        	e.printStackTrace();
+       	        }
+       	    }
            //################################################################### send_mail_api   ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("send_mail_api")) 
        		{

@@ -9066,5 +9066,53 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getTpcDatabyPanelHours(JSONArray jsonArray, String date, String date_p, String companyName,
+						String count, String tps_by) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="";
+				       if(tps_by.equalsIgnoreCase("submitDate")) {
+				    	   query="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				       }else if(tps_by.equalsIgnoreCase("server")) {
+				    	   query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(ServerRequestReceivedDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				       }else if(tps_by.equalsIgnoreCase("doneDate")) {
+				    	   query="SELECT mid(date_add(DoneDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(DoneDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				       }
+				       System.out.println("query = "+query);
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("pushtime", rs.getString("pushtime"));
+				       		jsonObject.put("msgcount", rs.getString("msgcount"));
+				       		jsonObject.put("username", rs.getString("username"));
+				       		jsonArray.put(jsonObject);
+				       	}
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
 				
 }
