@@ -7306,7 +7306,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username,sentbox.GatewayId,(select max(date_add(submitdate,interval 5.30 hour_minute)) from sentbox partition ("+date+")) as maxDateSubmit,(select max(date_add(donedate,interval 5.30 hour_minute)) from sentbox partition ("+date+")) as maxDateDone from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7317,6 +7317,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    jsonObject.put("mobileNumber", rs.getString("MobileNumber"));
 		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
 		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
+		                    jsonObject.put("maxDateSubmit", rs.getString("maxDateSubmit"));
+		                    jsonObject.put("maxDateDone", rs.getString("maxDateDone"));
 		                    jsonArray.put(jsonObject);
 				       		
 				       }
@@ -7350,7 +7353,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,AliasMessageId,report.iddetails.username from inbounddlr partition("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid order by receive desc limit 5;";
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,AliasMessageId,report.iddetails.username,inbounddlr.GatewayId,(select max(date_add(submitdate,interval 5.30 hour_minute)) from inbounddlr partition ("+date+")) as maxDateSubmit,(select max(date_add(donedate,interval 5.30 hour_minute)) from inbounddlr partition ("+date+")) as maxDateDone from inbounddlr partition("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid order by receive desc limit 5;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7361,6 +7364,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    jsonObject.put("mobileNumber", "");
 		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
 		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
+		                    jsonObject.put("maxDateSubmit", rs.getString("maxDateSubmit"));
+		                    jsonObject.put("maxDateDone", rs.getString("maxDateDone"));
 		                    jsonArray.put(jsonObject);
 				       		
 				       }
@@ -8903,7 +8909,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from sentbox partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 
 				      
 	                    System.out.println("query==>"+query);
@@ -8913,6 +8919,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("substr", rs.getString("substr"));
 		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
 		                    submitDateJson.put(jsonObject);
 				       		
 				       }
@@ -8947,7 +8954,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from sentbox partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 
 				      
 	                    System.out.println("query==>"+query);
@@ -8957,6 +8964,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("substr", rs.getString("substr"));
 		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
 		                    doneDateJson.put(jsonObject);
 				       		
 				       }
@@ -8991,7 +8999,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*)	as count from inbounddlr partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*)	as count,GatewayId from inbounddlr partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 			    	   System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
@@ -8999,6 +9007,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("substr", rs.getString("substr"));
 		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
 		                    submitDateJson.put(jsonObject);
 				       		
 				       }
@@ -9033,7 +9042,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count from inbounddlr partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13);";
+			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from inbounddlr partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 			    	   System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
@@ -9041,6 +9050,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("substr", rs.getString("substr"));
 		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
 		                    doneDateJson.put(jsonObject);
 				       		
 				       }
