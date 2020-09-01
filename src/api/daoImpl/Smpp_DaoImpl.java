@@ -7306,7 +7306,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username,sentbox.GatewayId,(select max(date_add(submitdate,interval 5.30 hour_minute)) from sentbox partition ("+date+")) as maxDateSubmit,(select max(date_add(donedate,interval 5.30 hour_minute)) from sentbox partition ("+date+")) as maxDateDone from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username,sentbox.GatewayId from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7318,8 +7318,6 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
 		                    jsonObject.put("username", rs.getString("username"));
 		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
-		                    jsonObject.put("maxDateSubmit", rs.getString("maxDateSubmit"));
-		                    jsonObject.put("maxDateDone", rs.getString("maxDateDone"));
 		                    jsonArray.put(jsonObject);
 				       		
 				       }
@@ -7353,7 +7351,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,AliasMessageId,report.iddetails.username,inbounddlr.GatewayId,(select max(date_add(submitdate,interval 5.30 hour_minute)) from inbounddlr partition ("+date+")) as maxDateSubmit,(select max(date_add(donedate,interval 5.30 hour_minute)) from inbounddlr partition ("+date+")) as maxDateDone from inbounddlr partition("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid order by receive desc limit 5;";
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,AliasMessageId,report.iddetails.username,inbounddlr.GatewayId from inbounddlr partition("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid order by receive desc limit 5;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7365,8 +7363,6 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
 		                    jsonObject.put("username", rs.getString("username"));
 		                    jsonObject.put("gatewayId", rs.getString("GatewayId"));
-		                    jsonObject.put("maxDateSubmit", rs.getString("maxDateSubmit"));
-		                    jsonObject.put("maxDateDone", rs.getString("maxDateDone"));
 		                    jsonArray.put(jsonObject);
 				       		
 				       }
@@ -8832,6 +8828,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("username",rs.getString("username"));
 				       		jsonObject.put("ip",rs.getString("IP"));
 				       		jsonObject.put("gatewayid",rs.getString("gatewayid"));
+				       		jsonObject.put("vendorId",rs.getString("VendorId"));
 				       		jsonObject.put("type",type);
 				       		jsonArray.put(jsonObject);
 				       }
@@ -8865,6 +8862,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
+				       if(serverid.equals("6") || serverid.equals("7")) {
+				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
+				       }else {
+				    	   query="select * from report.iddetails where serverid="+serverid+";";
+				       }
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -9121,6 +9123,158 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 
 				   	}
+					
+				   
+				   }
+				public String maxDateSubmit1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
+				public String maxDateDone1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateSubmit2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from inbounddlr partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
+				public String maxDateDone2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from inbounddlr partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
 					
 				   
 				   }
