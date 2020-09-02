@@ -8829,6 +8829,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("ip",rs.getString("IP"));
 				       		jsonObject.put("gatewayid",rs.getString("gatewayid"));
 				       		jsonObject.put("vendorId",rs.getString("VendorId"));
+				       		jsonObject.put("gatewaytype",rs.getString("gatewaytype"));
+				       		jsonObject.put("companyname",rs.getString("companyname"));
 				       		jsonObject.put("type",type);
 				       		jsonArray.put(jsonObject);
 				       }
