@@ -1314,11 +1314,10 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 	           	System.out.println("typetype==>>"+type);
 	           	System.out.println("filenamefilename==>>"+filename);
            	
-	           		String table="misdlranal";
+	           		String table="chk_bulkmis";
            	  		boolean truncatestatus=daoImpl.dropTable(table);
            	  		int i=daoImpl.createMisDlranalTable(id);
            	  		
-           	  		int alert_i=daoImpl.alterBulkMisTable(id);
            	  		int insert_i=daoImpl.insertBulkMis(id,preDate,currentDate,nextDate);
            	  		int update_i=daoImpl.updateBulkMis(id,preDate,currentDate,nextDate);
            	  		

@@ -8211,7 +8211,30 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String sql = "create table misdlranal(MobileNumber varchar(12),SubmitDate datetime,DoneDate datetime,AliasMessageId varchar(36),SenderId varchar(10),MessageId varchar(36),status varchar(50),CompanyId int(10) unsigned NOT NULL,GatewayId int(10) unsigned NOT NULL,ErrorCode varchar(50));"; 
+				       String sql = "CREATE TABLE IF NOT EXISTS `chk_bulkmis` (\n" + 
+				       		"  `MobileNumber` varchar(12) DEFAULT NULL,\n" + 
+				       		"  `SubmitDate` datetime DEFAULT NULL,\n" + 
+				       		"  `DoneDate` datetime DEFAULT NULL,\n" + 
+				       		"  `AliasMessageId` varchar(36) DEFAULT NULL,\n" + 
+				       		"  `SenderId` varchar(10) DEFAULT NULL,\n" + 
+				       		"  `MessageId` varchar(36) DEFAULT NULL,\n" + 
+				       		"  `status` varchar(50) DEFAULT NULL,\n" + 
+				       		"  `CompanyId` int(10) unsigned NOT NULL,\n" + 
+				       		"  `GatewayId` int(10) unsigned NOT NULL,\n" + 
+				       		"  `ErrorCode` varchar(50) DEFAULT NULL,\n" + 
+				       		"  `matched` varchar(10) DEFAULT NULL,\n" + 
+				       		"  KEY `MobileNumber` (`MobileNumber`),\n" + 
+				       		"  KEY `SubmitDate` (`SubmitDate`),\n" + 
+				       		"  KEY `DoneDate` (`DoneDate`),\n" + 
+				       		"  KEY `AliasMessageId` (`AliasMessageId`),\n" + 
+				       		"  KEY `SenderId` (`SenderId`),\n" + 
+				       		"  KEY `status` (`status`),\n" + 
+				       		"  KEY `MessageId` (`MessageId`),\n" + 
+				       		"  KEY `CompanyId` (`CompanyId`),\n" + 
+				       		"  KEY `GatewayId` (`GatewayId`),\n" + 
+				       		"  KEY `ErrorCode` (`ErrorCode`),\n" + 
+				       		"  KEY `matched` (`matched`)\n" + 
+				       		");"; 
 
 				        i=stmt.executeUpdate(sql);
 				        if(i>0) {
@@ -8375,7 +8398,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					try 
 					{
 						stmt=conn.createStatement();
-						  ps=conn.prepareStatement("insert into misdlranal(MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode) select MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode from sentbox partition("+currentDate+") where AliasMessageId not in(select AliasMessageId from inbounddlr partition("+currentDate+"));");
+						  ps=conn.prepareStatement("insert into chk_bulkmis(MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode) select MobileNumber,AliasMessageId,MessageId,SubmitDate,DoneDate,SenderId,CompanyId,GatewayId,Status,ErrorCode from sentbox partition("+currentDate+") where AliasMessageId not in(select AliasMessageId from inbounddlr partition("+currentDate+")) ;");
 						  i= ps.executeUpdate();
 						  
 						  if(i>0) {
@@ -8449,7 +8472,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					try 
 					{
 						stmt=conn.createStatement();
-						  ps=conn.prepareStatement("update misdlranal,inbounddlr partition("+preDate+","+currentDate+","+nextDate+") set misdlranal.matched='yes' where misdlranal.AliasMessageId=inbounddlr.AliasMessageId;");
+						  ps=conn.prepareStatement("update chk_bulkmis,inbounddlr partition("+preDate+","+currentDate+","+nextDate+") set chk_bulkmis.matched='yes' where chk_bulkmis.AliasMessageId=inbounddlr.AliasMessageId;");
 						  i= ps.executeUpdate();
 						  
 						  if(i>0) {
@@ -8521,7 +8544,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId,count(*) as count into outfile '/tmp/"+filename+"' fields terminated by ',' from misdlranal,report.iddetails where misdlranal.matched is null and misdlranal.CompanyId=report.iddetails.CompanyId group by GatewayId,status,ErrorCode,report.iddetails.username,misdlranal.CompanyId ;";
+				       String query="select GatewayId,status,ErrorCode,report.iddetails.username,chk_bulkmis.CompanyId,count(*) as count into outfile '/tmp/"+filename+"' fields terminated by ',' from chk_bulkmis,report.iddetails where chk_bulkmis.matched is null and chk_bulkmis.CompanyId=report.iddetails.CompanyId group by GatewayId,status,ErrorCode,report.iddetails.username,chk_bulkmis.CompanyId ;";
 				       rs = stmt.executeQuery(query);
 				      // int i = stmt.executeUpdate(query);
 				      
