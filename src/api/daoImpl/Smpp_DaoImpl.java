@@ -9303,5 +9303,86 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getDlrMismatchSentBox(JSONArray sentbox, String date, String companyname, String date_p) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date_p+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyname+"%' and date_add(submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    sentbox.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
+				public void getDlrMismatchInbounddlr(JSONArray inbounddlr, String date, String companyname,
+						String date_p) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select report.iddetails.username,count(*) as count from inbounddlr partition ("+date_p+"),report.iddetails  where inbounddlr.SiteUserId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyname+"%' and date_add(donedate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("count", rs.getString("count"));
+		                    inbounddlr.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+					
+				   
+				   }
 				
 }

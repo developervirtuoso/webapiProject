@@ -1079,7 +1079,24 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			
        			out.print(jsonArray.toString());
        			
-       		}//################################################################### lastEntryMaxDate  ###################################################################// 	
+       		}//################################################################### dlrMismatch  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("dlrMismatch")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			JSONArray sentbox=new JSONArray();
+       			JSONArray inbounddlr=new JSONArray();
+       			String date = request.getParameter("date");
+       			String date_p = request.getParameter("date_p");
+       			String companyname = request.getParameter("companyname");
+       			smpp_dao.getDlrMismatchSentBox(sentbox, date,companyname,date_p);
+       			smpp_dao.getDlrMismatchInbounddlr(inbounddlr, date,companyname,date_p);
+       			jsonObject.put("sentbox", sentbox);
+       			jsonObject.put("inbounddlr", inbounddlr);
+       			out.print(jsonObject.toString());
+       			
+       		}
+             //################################################################### lastEntryMaxDate  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryMaxDate")) 
        		{
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
