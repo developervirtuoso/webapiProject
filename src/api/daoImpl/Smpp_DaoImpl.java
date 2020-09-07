@@ -8887,7 +8887,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
-				       if(serverid.equals("6") || serverid.equals("7")) {
+				       if(serverid.equals("6") || serverid.equals("7") || serverid.equals("8")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
 				       }else {
 				    	   query="select * from report.iddetails where serverid="+serverid+";";
