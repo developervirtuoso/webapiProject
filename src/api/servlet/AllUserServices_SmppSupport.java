@@ -1087,10 +1087,11 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			JSONArray sentbox=new JSONArray();
        			JSONArray inbounddlr=new JSONArray();
        			String date = request.getParameter("date");
-       			String date_p = request.getParameter("date_p");
+       			String date_p_s = request.getParameter("date_p_s");
+       			String date_p_d = request.getParameter("date_p_d");
        			String companyname = request.getParameter("companyname");
-       			smpp_dao.getDlrMismatchSentBox(sentbox, date,companyname,date_p);
-       			smpp_dao.getDlrMismatchInbounddlr(inbounddlr, date,companyname,date_p);
+       			smpp_dao.getDlrMismatchSentBox(sentbox, date,companyname,date_p_s);
+       			smpp_dao.getDlrMismatchInbounddlr(inbounddlr, date,companyname,date_p_d);
        			jsonObject.put("sentbox", sentbox);
        			jsonObject.put("inbounddlr", inbounddlr);
        			out.print(jsonObject.toString());
