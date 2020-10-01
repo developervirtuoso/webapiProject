@@ -8626,7 +8626,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select userdetails.username as AccountName,sum(count) as count,userdetails.companyid as companyid from userdetails,tbl_submitted where userdetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8667,7 +8667,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select userdetails.username as AccountName,sum(count) as count,userdetails.companyid as companyid from userdetails,tbl_delivered where errorcode like '0' and userdetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by userdetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_delivered where errorcode like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8854,6 +8854,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("vendorId",rs.getString("VendorId"));
 				       		jsonObject.put("gatewaytype",rs.getString("gatewaytype"));
 				       		jsonObject.put("companyname",rs.getString("companyname"));
+				       		jsonObject.put("zone",rs.getString("zone"));
 				       		jsonObject.put("type",type);
 				       		jsonArray.put(jsonObject);
 				       }
@@ -8887,7 +8888,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
-				       if(serverid.equals("6") || serverid.equals("7") || serverid.equals("8")) {
+				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
 				       }else {
 				    	   query="select * from report.iddetails where serverid="+serverid+";";
@@ -9384,5 +9385,78 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void runLinuxCommandService(JSONArray jsonArray, String commandLine) {
+					try {
+						
+						Process process = Runtime.getRuntime().exec(commandLine);
+						StringBuilder output = new StringBuilder();
+						BufferedReader reader = new BufferedReader(
+								new InputStreamReader(process.getInputStream()));
+						String line;
+						int i=1;
+						while ((line = reader.readLine()) != null) {
+							output.append(line + "\n");
+							JSONObject jsonObject=new JSONObject();
+							jsonObject.put("line", line);
+							//System.out.println("==>"+line);
+							jsonArray.put(jsonObject);
+							i++;
+						}
+
+						int exitVal = process.waitFor();
+						if (exitVal == 0) {
+							System.out.println("Success11111!");
+							//System.out.println(output);
+							
+						} else {
+							//abnormal...
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+						}
+				public void runLinuxCommand(JSONArray jsonArray, String commandLine) {
+					try {
+						//System.out.println("commandLine  "+commandLine);
+						String commandArr[]=commandLine.split(",");
+						Process process = Runtime.getRuntime().exec(commandArr);
+
+						StringBuilder output = new StringBuilder();
+
+						BufferedReader reader = new BufferedReader(
+								new InputStreamReader(process.getInputStream()));
+
+						String line;
+						int i=1;
+						while ((line = reader.readLine()) != null) {
+							output.append(line + "\n");
+							JSONObject jsonObject=new JSONObject();
+							jsonObject.put("line", line);
+							//System.out.println("==>"+line);
+							jsonArray.put(jsonObject);
+							i++;
+						}
+
+						int exitVal = process.waitFor();
+						if (exitVal == 0) {
+							System.out.println("Success11111!");
+							//System.out.println(output);
+							
+						} else {
+							//abnormal...
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+						}
 				
 }

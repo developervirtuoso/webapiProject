@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -48,6 +49,7 @@ import com.mongodb.MongoClient;
 import all.beans.BulkMismatchBeans;
 import all.beans.SentBoxBulkFiles;
 import all.beans.SmppUser;
+import api.daoImpl.HangoutMsg;
 import api.daoImpl.SendEmail;
 import api.daoImpl.Smpp_DaoImpl;
 import common.database.DbConnectionMongo;
@@ -198,17 +200,17 @@ public class AllUserServices_SmppSupport extends HttpServlet {
         	  JSONArray jsonArray=new JSONArray();
         	  String acc_name = request.getParameter("user_id");
         	  String date = request.getParameter("date").replace("-", "");
-        	  System.out.println(date);
+        	 // System.out.println(date);
              // int new_date = Integer.parseInt(date.substring(7)) + 1;
              // System.out.println("new_datenew_datenew_datenew_datenew_date"+new_date);
              // String date_data = date.substring(0, 7) + String.valueOf(new_date);
-              System.out.println("date_datadate_datadate_datadate_data"+date);
+           //   System.out.println("date_datadate_datadate_datadate_data"+date);
         	  String searchdata=request.getParameter("searchdata");
         	  String search_keyword = request.getParameter("mobdata");
         	  String acc_id=daoImpl.getResetSearchId(acc_name);
-        	  System.out.println("searchdatasearchdatasearchdatasearchdata"+searchdata);
-        	  System.out.println("search_keywordsearch_keywordsearch_keyword"+search_keyword);
-        	  System.out.println("acc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_id"+acc_id);
+        	 // System.out.println("searchdatasearchdatasearchdatasearchdata"+searchdata);
+        	//  System.out.println("search_keywordsearch_keywordsearch_keyword"+search_keyword);
+        	 // System.out.println("acc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_idacc_id"+acc_id);
         	daoImpl.getSearchSmppData(jsonArray,acc_name,date,searchdata,search_keyword,acc_id,date);
         	 out.print(jsonArray.toString());
         	  
@@ -221,7 +223,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
         	  JSONArray jsonArray=new JSONArray();
         	  String userName = request.getParameter("userName");
         	  String date = request.getParameter("date");
-        	  System.out.println(date);
+        	  //System.out.println(date);
         	  String searchdata=request.getParameter("searchdata");
         	  String type = request.getParameter("type");
         	  String acc_id=daoImpl.getResetSearchId(userName);
@@ -1219,13 +1221,13 @@ public class AllUserServices_SmppSupport extends HttpServlet {
            	  String nextDate = request.getParameter("nextDate");
            	  String type = request.getParameter("type");
            	  String filename = request.getParameter("filename");
-           	  System.out.println("urlurlurl==>>"+url);
+           	/*  System.out.println("urlurlurl==>>"+url);
            	  System.out.println("ididid==>>"+id);
            	  System.out.println("currentDate==>>"+currentDate);
 	           	System.out.println("preDatepreDate==>>"+preDate);
 	           	System.out.println("nextDatenextDate==>>"+nextDate);
 	           	System.out.println("typetype==>>"+type);
-	           	System.out.println("filenamefilename==>>"+filename);
+	           	System.out.println("filenamefilename==>>"+filename);*/
            	
            	  try (BufferedInputStream inputStream = new BufferedInputStream(new URL(url).openStream());
 					  FileOutputStream fileOS = new FileOutputStream("/home/dummy_file.txt")) {
@@ -1284,7 +1286,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 				        if(temp != null)
 				        {
 				            System.out.println("File renamed and moved successfully");
-				            System.out.println(uploadFile);
+				          //  System.out.println(uploadFile);
 				            SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
 				            boxBulkFiles.setId(id);
 							boxBulkFiles.setStatus("7");
@@ -1325,12 +1327,12 @@ public class AllUserServices_SmppSupport extends HttpServlet {
            	  String nextDate = request.getParameter("nextDate");
            	  String type = request.getParameter("type");
            	  String filename = request.getParameter("filename");
-           	  System.out.println("ididid==>>"+id);
-           	  System.out.println("currentDate==>>"+currentDate);
-	           	System.out.println("preDatepreDate==>>"+preDate);
-	           	System.out.println("nextDatenextDate==>>"+nextDate);
-	           	System.out.println("typetype==>>"+type);
-	           	System.out.println("filenamefilename==>>"+filename);
+           	 // System.out.println("ididid==>>"+id);
+           	 // System.out.println("currentDate==>>"+currentDate);
+	          // 	System.out.println("preDatepreDate==>>"+preDate);
+	           	//System.out.println("nextDatenextDate==>>"+nextDate);
+	           	//System.out.println("typetype==>>"+type);
+	           	//System.out.println("filenamefilename==>>"+filename);
            	
 	           		String table="chk_bulkmis";
            	  		boolean truncatestatus=daoImpl.dropTable(table);
@@ -1655,6 +1657,48 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			smpp_dao.getAccountDetails(jsonArray, serverid,type);
        			out.print(jsonArray.toString());
        		}
+           //################################################################### linuxCommand  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("linuxCommand")) 
+       		{
+       			String commandLine = request.getParameter("commandLine");
+     			//System.out.println("linuxCommand123linuxCommand123linuxCommand123linuxCommand123");
+     			//System.out.println("commandLine==>"+commandLine);
+     			JSONArray jsonArray=new JSONArray();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+     			daoImpl.runLinuxCommand(jsonArray,commandLine);
+     			out.print(jsonArray.toString());
+       		}
+           //################################################################### linuxCommandservice  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("linuxCommandservice")) 
+       		{
+       			String commandLine = request.getParameter("commandLine");
+     			//System.out.println("linuxCommand123linuxCommand123linuxCommand123linuxCommand123");
+     			//System.out.println("commandLine==>"+commandLine);
+     			JSONArray jsonArray=new JSONArray();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+     			daoImpl.runLinuxCommandService(jsonArray,commandLine);
+     			out.print(jsonArray.toString());
+       		}
+             //################################################################### hangoutMessage  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("hangoutMessage")) 
+       		{
+       			String message = request.getParameter("message");
+       			String emails = request.getParameter("emails");
+     			//System.out.println("message ==>"+message);
+     			//System.out.println("emails==>"+emails);
+     			try {
+     				HangoutMsg hangoutMsg=new HangoutMsg();
+     				String emailsArr[]=emails.split(",");
+     				for (int i = 0; i < emailsArr.length; i++) {
+     					hangoutMsg.sendMessage(emailsArr[i],message);
+					}
+         	      	
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+    		
+       		}
+             
     }
 
 	/**
