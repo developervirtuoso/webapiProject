@@ -1687,15 +1687,29 @@ public class AllUserServices_SmppSupport extends HttpServlet {
      			//System.out.println("message ==>"+message);
      			//System.out.println("emails==>"+emails);
      			try {
-     				HangoutMsg hangoutMsg=new HangoutMsg();
      				String emailsArr[]=emails.split(",");
      				for (int i = 0; i < emailsArr.length; i++) {
+     					HangoutMsg hangoutMsg=new HangoutMsg();
      					hangoutMsg.sendMessage(emailsArr[i],message);
+     					hangoutMsg.disconnect();
 					}
-         	      	
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+    		
+       		} //################################################################### senderIDTraffic  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("senderIDTraffic")) 
+       		{
+       			String pdate = request.getParameter("pdate");
+       			String date = request.getParameter("date");
+     			String companyName=request.getParameter("companyName");
+     			String userName=request.getParameter("userName");
+     			String selectBy=request.getParameter("selectBy"); 
+     			JSONArray jsonArray=new JSONArray();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
+     			//daoImpl.runLinuxCommandService(jsonArray,commandLine);
+     			daoImpl.getSenderIDTraffic(pdate,date,companyName,jsonArray,userName,selectBy);
+     			out.print(jsonArray.toString());
     		
        		}
              
