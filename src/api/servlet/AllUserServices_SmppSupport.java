@@ -1121,7 +1121,31 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			
        			out.print(jsonObject.toString());
        			
+       		}//################################################################### lastEntryMaxDateUserName  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryMaxDateUserName")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			String date = request.getParameter("date");
+       			String sqlno = request.getParameter("sqlno");
+       			String username = request.getParameter("username");
+       			if(sqlno.equals("1")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitByUserName1(date,username);
+       				String maxDateDone=smpp_dao.maxDateDoneUsername1(date,username);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}else if(sqlno.equals("2")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitUsername2(date,username);
+       				String maxDateDone=smpp_dao.maxDateDoneUsername2(date,username);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}
+       			
+       			
+       			out.print(jsonObject.toString());
+       			
        		}
+             
            //################################################################### gatewayAnalysis  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("gatewayAnalysis")) 
        		{

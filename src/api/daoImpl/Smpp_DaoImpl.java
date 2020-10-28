@@ -9190,6 +9190,44 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public String maxDateSubmitByUserName1(String date,String username) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
 				public String maxDateDone1(String date) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
@@ -9200,6 +9238,44 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateDoneUsername1(String date,String username) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
@@ -9266,6 +9342,44 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public String maxDateSubmitUsername2(String date,String username) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from inbounddlr partition ("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
 				public String maxDateDone2(String date) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
@@ -9276,6 +9390,44 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from inbounddlr partition ("+date+") ;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateDoneUsername2(String date,String username) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from inbounddlr partition ("+date+"),report.iddetails where inbounddlr.SiteUserId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
