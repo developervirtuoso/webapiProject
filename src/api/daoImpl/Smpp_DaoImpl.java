@@ -8890,24 +8890,37 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       String query="select * from report.iddetails where serverid="+serverid+";";
 				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
+				    	   rs = stmt.executeQuery(query);
+					       while (rs.next()) {
+					       		JSONObject jsonObject=new JSONObject();
+					       		jsonObject.put("id", rs.getString("id"));
+					       		jsonObject.put("companyid", rs.getString("companyid"));
+					       		jsonObject.put("serverid", rs.getString("serverid"));
+					       		jsonObject.put("username",rs.getString("username"));
+					       		jsonObject.put("companyname",rs.getString("companyname"));
+					       		jsonObject.put("team",rs.getString("team"));
+					       		jsonObject.put("userid",rs.getString("userid"));
+					       		jsonObject.put("type",type);
+					       		jsonArray.put(jsonObject);
+					       }
 				       }else {
 				    	   query="select * from report.iddetails where serverid="+serverid+";";
+				    	   rs = stmt.executeQuery(query);
+					       while (rs.next()) {
+					       		JSONObject jsonObject=new JSONObject();
+					       		jsonObject.put("id", rs.getString("id"));
+					       		jsonObject.put("companyid", rs.getString("companyid"));
+					       		jsonObject.put("charset", rs.getString("Charset"));
+					       		jsonObject.put("serverid", rs.getString("serverid"));
+					       		jsonObject.put("username",rs.getString("username"));
+					       		jsonObject.put("companyname",rs.getString("companyname"));
+					       		jsonObject.put("team",rs.getString("team"));
+					       		jsonObject.put("userid",rs.getString("userid"));
+					       		jsonObject.put("type",type);
+					       		jsonArray.put(jsonObject);
+					       }
 				       }
 		               
-				       rs = stmt.executeQuery(query);
-				      
-				       	while (rs.next()) {
-				       		JSONObject jsonObject=new JSONObject();
-				       		jsonObject.put("id", rs.getString("id"));
-				       		jsonObject.put("companyid", rs.getString("companyid"));
-				       		jsonObject.put("serverid", rs.getString("serverid"));
-				       		jsonObject.put("username",rs.getString("username"));
-				       		jsonObject.put("companyname",rs.getString("companyname"));
-				       		jsonObject.put("team",rs.getString("team"));
-				       		jsonObject.put("userid",rs.getString("userid"));
-				       		jsonObject.put("type",type);
-				       		jsonArray.put(jsonObject);
-				       }
 				     }catch(Exception e){
 				     	e.printStackTrace();
 				     }finally{
