@@ -8700,6 +8700,47 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getUnDlrReport(JSONArray dlrJsonArray, String fromDate, String toDate, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				  
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_delivered where errorcode not like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("AccountName"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("type",type);
+				       		dlrJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
 				public void getSubDlrReportWithName195(JSONArray jsonArray, String fromDate, String toDate,
 						String name, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(6);
@@ -9518,7 +9559,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select report.iddetails.username,count(*) as count from inbounddlr partition ("+date_p+"),report.iddetails  where inbounddlr.SiteUserId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyname+"%' and date_add(donedate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
+	                    query = "select report.iddetails.username,count(*) as count from inbounddlr partition ("+date_p+"),report.iddetails  where inbounddlr.SiteUserId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyname+"%' and date_add(submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      

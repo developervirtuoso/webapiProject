@@ -1617,13 +1617,16 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			JSONObject jsonObject=new JSONObject();
        			JSONArray subJsonArray=new JSONArray();
        			JSONArray dlrJsonArray=new JSONArray();
+       			JSONArray undlrJsonArray=new JSONArray();
        			String fromDate = request.getParameter("fromDate");
        			String toDate = request.getParameter("toDate");
        			String type = request.getParameter("type");
        			smpp_dao.getSubReport(subJsonArray, fromDate,toDate,type);
        			smpp_dao.getDlrReport(dlrJsonArray, fromDate,toDate,type);
+       			smpp_dao.getUnDlrReport(undlrJsonArray, fromDate,toDate,type);
        			jsonObject.put("sub", subJsonArray);
        			jsonObject.put("dlr", dlrJsonArray);
+       			jsonObject.put("undlr", undlrJsonArray);
        			out.print(jsonObject.toString());
        		}
            //################################################################### errorSubCodeByCompanyidAndDate  ###################################################################// 	
