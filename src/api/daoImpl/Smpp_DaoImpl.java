@@ -7398,9 +7398,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if (type.equalsIgnoreCase("mobileNo")) {
-		                  query = "select inbounddlr.GatewayId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+") where sentbox.MobileNumber ='"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                  query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MobileNumber ='"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
 		                }else if (type.equalsIgnoreCase("aliasId")) {
-		                    query = "select inbounddlr.GatewayId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+") where sentbox.AliasMessageId like '"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                    query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and  sentbox.AliasMessageId like '"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
 		                    System.out.println(query);
 		                }
 		               rs = stmt.executeQuery(query);
@@ -7408,7 +7408,10 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				      
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("gatewayId", rs.getLong("GatewayId"));
-		                    jsonObject.put("mobileNumber", rs.getString("mobileNumber"));
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("accountId", rs.getString("AccountId"));
+		                    jsonObject.put("mobileNumber", rs.getString("MobileNumber"));
 		                    jsonObject.put("sentDate", rs.getString("SentDate"));
 		                    jsonObject.put("recvDate", rs.getString("RecvDate"));
 		                    jsonObject.put("aliasMessageId", rs.getString("AliasMessageId"));
