@@ -8932,7 +8932,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
-				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7")) {
+				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7") || serverid.equals("9")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
 				    	   rs = stmt.executeQuery(query);
 					       while (rs.next()) {
