@@ -9713,11 +9713,51 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 
 				   	}
-					
-					
-				   
-				   
-					
+				}
+				public void getSenderIDTraffic2(String pdate, String date, String companyName, JSONArray jsonArray, String userName, String selectBy) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(7);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       if(selectBy.equals("1")) {
+				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				       }else  if(selectBy.equals("2")) {
+				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and iddetails.username like '%"+userName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				       }
+			    	   
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("date", rs.getString("date"));
+		                    jsonObject.put("accountId", rs.getString("AccountId"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("senderId", rs.getString("SenderId"));
+		                    jsonObject.put("submission", rs.getLong("submission"));
+		                    jsonObject.put("delivered", rs.getLong("Delivered"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
 				}
 				
 }

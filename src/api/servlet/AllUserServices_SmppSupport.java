@@ -1736,6 +1736,9 @@ public class AllUserServices_SmppSupport extends HttpServlet {
      			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
      			//daoImpl.runLinuxCommandService(jsonArray,commandLine);
      			daoImpl.getSenderIDTraffic(pdate,date,companyName,jsonArray,userName,selectBy);
+     			if(jsonArray.length()==0) {
+     				daoImpl.getSenderIDTraffic2(pdate,date,companyName,jsonArray,userName,selectBy);
+     			}
      			out.print(jsonArray.toString());
     		
        		}
