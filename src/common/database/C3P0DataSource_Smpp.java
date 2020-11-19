@@ -43,7 +43,10 @@ public class C3P0DataSource_Smpp {
 			
 			else if(server_to_deploy==2)
 			{
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				//Spanel
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/report?autoReconnect=true", "reports", "");
+				// End Spanel
 			}
 			else if(server_to_deploy==3)
 			{

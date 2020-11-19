@@ -25,9 +25,11 @@ public class C3P0DataSource_Search {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			
-			dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
-			// dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?autoReconnect=true", "root", "");
+			//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
 			 
+			//Spanel
+			dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
+		// End Spanel
 			 
 		} catch (Exception ex) {
 			System.out.println("Exception in DBConnection java file of fun" + ex);

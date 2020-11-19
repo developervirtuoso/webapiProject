@@ -92,7 +92,10 @@ public class C3P0DataSource_ReportData {
 			
 			else if(server_to_deploy==2)
 			{
-				 dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2reportdata?autoReconnect=true", "reports", "");
+				// dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2reportdata?autoReconnect=true", "reports", "");
+				//Spanel
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2reportdata?autoReconnect=true", "reports", "");
+				// End Spanel
 				 
 				
 			}

@@ -32,8 +32,12 @@ public class C3P0DataSource_All {
 			else if(server_to_deploy==2)
 			{
 				
-				System.out.println(" use report");
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+			//	System.out.println(" use report");
+				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				
+				//Spanel
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/report?autoReconnect=true", "reports", "");
+				// End Spanel
 			}
 			else if(server_to_deploy==3)
 			{
@@ -42,10 +46,10 @@ public class C3P0DataSource_All {
 			}
 			else if(server_to_deploy==4)
 			{
-				System.out.println(" use itextwebv2smpp"+4);
-				System.out.println(" user  reports");
-				System.out.println(" pass  ");
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
+			//	dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
+				//Spanel
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
+				// End Spanel
 			}
 			else if(server_to_deploy==5)
 			{
@@ -57,7 +61,10 @@ public class C3P0DataSource_All {
 			}
 			else if(server_to_deploy==7)
 			{
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp_log", "reports", "");
+				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp_log", "reports", "");
+				//Spanel
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp_log?autoReconnect=true", "reports", "");
+				// End Spanel
 			}
 			else
 			{
