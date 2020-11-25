@@ -3,6 +3,8 @@ package common.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import mylibs.ApiCons;
+
 public class C3P0DataSource_All {
 	private static C3P0DataSource_All dataSource;
 
@@ -32,12 +34,17 @@ public class C3P0DataSource_All {
 			else if(server_to_deploy==2)
 			{
 				
-			//	System.out.println(" use report");
-				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				if(ApiCons.mysqlAccess==0) {
+//					System.out.println(" use report");
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				}else {
+					//Spanel
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/report?autoReconnect=true", "reports", "");
+					// End Spanel
+				}
+			
 				
-				//Spanel
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/report?autoReconnect=true", "reports", "");
-				// End Spanel
+				
 			}
 			else if(server_to_deploy==3)
 			{
@@ -46,10 +53,15 @@ public class C3P0DataSource_All {
 			}
 			else if(server_to_deploy==4)
 			{
-			//	dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
-				//Spanel
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
-				// End Spanel
+				if(ApiCons.mysqlAccess==0) {
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp?autoReconnect=true", "reports", "");
+				}else {
+					//Spanel
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
+					// End Spanel	
+				}
+			
+				
 			}
 			else if(server_to_deploy==5)
 			{
@@ -61,10 +73,15 @@ public class C3P0DataSource_All {
 			}
 			else if(server_to_deploy==7)
 			{
-				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp_log", "reports", "");
-				//Spanel
-				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp_log?autoReconnect=true", "reports", "");
-				// End Spanel
+				if(ApiCons.mysqlAccess==0) {
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp_log", "reports", "");
+				}else {
+					//Spanel
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp_log?autoReconnect=true", "reports", "");
+					// End Spanel
+				}
+				
+				
 			}
 			else
 			{

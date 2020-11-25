@@ -226,8 +226,14 @@ public class AllUserServices_SmppSupport extends HttpServlet {
         	  //System.out.println(date);
         	  String searchdata=request.getParameter("searchdata");
         	  String type = request.getParameter("type");
+        	  String searchtype = request.getParameter("searchtype");
         	  String acc_id=daoImpl.getResetSearchId(userName);
-        	  daoImpl.getSentBoxData(jsonArray,date,searchdata,type,acc_id);
+        	/*  System.out.println("userName==>"+userName);
+      		System.out.println("date==>"+date);
+      		System.out.println("searchdata==>"+searchdata);
+      		System.out.println("searchtype==>"+searchtype);
+      		System.out.println("type==>"+type);*/
+        	  daoImpl.getSentBoxData(jsonArray,date,searchdata,type,acc_id,searchtype);
         	 out.print(jsonArray.toString());
         	  
         	  
@@ -1167,30 +1173,20 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        		{
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
-       			String date = request.getParameter("date");
-       			String sqlno = request.getParameter("sqlno");
-       			String type = request.getParameter("type");
-       			String panel="1";
-       			if(type.equals("1")) {
-       				panel="1";
-       			}else if(type.equals("2")) {
-       				panel="2";
-       			}else if(type.equals("3")) {
-       				panel="3";
-       			}
-       			String sql="";
-       			if(sqlno.equals("1")) {
-       				
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"' ) and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '10' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
-       			}else if(sqlno.equals("2")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '196' and Status like '%failed%' group by report.iddetails.username,report.giddetails.gatewayname;";
-       			}else if(sqlno.equals("3")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.iddetails.username,report.giddetails.gatewayname;";
-       			}else if(sqlno.equals("4")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and (inbounddlr.ErrorCode like '88' or inbounddlr.ErrorCode like '088') group by report.iddetails.username,report.giddetails.gatewayname;";
-       			}else if(sqlno.equals("5")) {
-       				sql="select report.iddetails.username,report.giddetails.gatewayname,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+date+") where (report.giddetails.serverid like '"+panel+"') and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '1038' or ErrorCode like '1039') group by report.iddetails.username,report.giddetails.gatewayname;";
-       			}
+       			String sql = request.getParameter("sql");
+       			/* select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '88' or ErrorCode like '088') group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1038' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1039' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1083' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1025' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1093' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1027' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '604' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '623' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '620' group by report.giddetails.gatewayname,report.iddetails.username;
+					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '621' group by report.giddetails.gatewayname,report.iddetails.username;
+       			 * */
        			smpp_dao.getFailureAnalysis(jsonArray, sql);
        			out.print(jsonArray.toString());
        			
@@ -1245,13 +1241,13 @@ public class AllUserServices_SmppSupport extends HttpServlet {
            	  String nextDate = request.getParameter("nextDate");
            	  String type = request.getParameter("type");
            	  String filename = request.getParameter("filename");
-           	/*  System.out.println("urlurlurl==>>"+url);
+           	  System.out.println("urlurlurl==>>"+url);
            	  System.out.println("ididid==>>"+id);
            	  System.out.println("currentDate==>>"+currentDate);
 	           	System.out.println("preDatepreDate==>>"+preDate);
 	           	System.out.println("nextDatenextDate==>>"+nextDate);
 	           	System.out.println("typetype==>>"+type);
-	           	System.out.println("filenamefilename==>>"+filename);*/
+	           	System.out.println("filenamefilename==>>"+filename);
            	
            	  try (BufferedInputStream inputStream = new BufferedInputStream(new URL(url).openStream());
 					  FileOutputStream fileOS = new FileOutputStream("/home/dummy_file.txt")) {
@@ -1295,10 +1291,10 @@ public class AllUserServices_SmppSupport extends HttpServlet {
 			  		String fileurl="";
 			  				//tpanel//usr/local/apache-tomcat-8.5.49/webapps/webapi/
        				if(type.equalsIgnoreCase("3") || type.equalsIgnoreCase("TPanel")){
-       						fileurl= "/usr/local/apache-tomcat-8.5.49/webapps/webapi/uploaded/"+filename;
-       						uploadFile=ApiCons.tpanelBaseUrl+"uploaded/"+filename;
+       					fileurl= "/usr/local/apache-tomcat-8.5.49/webapps/webapi/uploaded/"+filename;
+       					uploadFile=ApiCons.tpanelBaseUrl+"uploaded/"+filename;
        				}else if(type.equalsIgnoreCase("2") || type.equalsIgnoreCase("SPanel")){
-       					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;
+       					fileurl= "/usr/local/apache-tomcat-8.5.49/webapps/webapi/uploaded/"+filename;
        					uploadFile=ApiCons.spanelBaseUrl+"uploaded/"+filename;
        				}else if(type.equalsIgnoreCase("1") || type.equalsIgnoreCase("Panel")){
        					fileurl= "/usr/local/apache-tomcat-8.5.37/webapps/webapi/uploaded/"+filename;

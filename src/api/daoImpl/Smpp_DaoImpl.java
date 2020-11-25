@@ -93,11 +93,14 @@ import superAdmin.servlet.smppSignIn;
 public class Smpp_DaoImpl {
 	public static void main(String[] args) {
 		Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
-		String table="dummy_table";
-	  		boolean truncatestatus=daoImpl.dropTable(table);
-	  		int i=daoImpl.createDummyTable(table,"");
-   	  		int alert_i=daoImpl.alterTable(table,"");
-   	  	boolean load_data_status=daoImpl.LoadSentBoxDateFile(table,"");
+		SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
+        boxBulkFiles.setId("6");
+			boxBulkFiles.setStatus("7");
+			boxBulkFiles.setProcess("50%");
+			boxBulkFiles.setStatus_msg("Completed all process");
+			boxBulkFiles.setGet_file("http://49.50.105.175:8088/smscms/UploadedImages/1606196400523s2bulkLogs23Nov.txt");
+			boxBulkFiles.setRun_status("0");
+			daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
 	}
 
 	final static Logger logger = Logger.getLogger(Smpp_DaoImpl.class);
@@ -6234,7 +6237,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       System.out.println("qqqqqqqqqq11111= select companyid from report.userdetails where username like '" + acc_name + "'");
+				      // System.out.println("qqqqqqqqqq11111= select companyid from report.userdetails where username like '" + acc_name + "'");
 				       String query="select companyid from report.userdetails where username like '" + acc_name + "'";
 		               
 				       rs = stmt.executeQuery(query);
@@ -7389,7 +7392,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   }
 				public void getSentBoxData(JSONArray jsonArray, String date, String searchdata, String type,
-						String acc_id) {
+						String acc_id, String searchtype) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
@@ -7397,11 +7400,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       if (type.equalsIgnoreCase("mobileNo")) {
-		                  query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MobileNumber ='"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
-		                }else if (type.equalsIgnoreCase("aliasId")) {
-		                    query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and  sentbox.AliasMessageId like '"+searchdata+"' and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
-		                    System.out.println(query);
+				       if (searchtype.equalsIgnoreCase("mobileNo")) {
+		                  query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MobileNumber ='"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                }else if (searchtype.equalsIgnoreCase("aliasId")) {
+		                    query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and  sentbox.AliasMessageId like '"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                   // System.out.println("==>"+query);
 		                }
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {

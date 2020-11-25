@@ -3,6 +3,9 @@ package common.database;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import mylibs.ApiCons;
+
 import java.sql.DriverManager;
 //import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -43,10 +46,15 @@ public class C3P0DataSource_Smpp {
 			
 			else if(server_to_deploy==2)
 			{
-				//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
-				//Spanel
+				if(ApiCons.mysqlAccess==0) {
+					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/report?autoReconnect=true", "reports", "");
+				}else {
+					//Spanel
 					dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/report?autoReconnect=true", "reports", "");
 				// End Spanel
+				}
+				
+				
 			}
 			else if(server_to_deploy==3)
 			{

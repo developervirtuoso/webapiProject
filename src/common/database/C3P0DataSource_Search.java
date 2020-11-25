@@ -3,6 +3,8 @@ package common.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import mylibs.ApiCons;
+
 public class C3P0DataSource_Search {
 	private static C3P0DataSource_Search dataSource;
 	// private ComboPooledDataSource comboPooledDataSource;
@@ -24,12 +26,16 @@ public class C3P0DataSource_Search {
 		Connection dbconn = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			if(ApiCons.mysqlAccess==0) {
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
+			}else {
+				//Spanel
+				dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
+			// End Spanel
+			}
 			
-			//dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3130/itextwebv2smpp", "reports", "");
 			 
-			//Spanel
-			dbconn = DriverManager.getConnection("jdbc:mysql://localhost:3306/itextwebv2smpp?autoReconnect=true", "reports", "");
-		// End Spanel
+			
 			 
 		} catch (Exception ex) {
 			System.out.println("Exception in DBConnection java file of fun" + ex);
