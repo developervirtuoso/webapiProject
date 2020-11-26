@@ -1173,23 +1173,35 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        		{
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
        			JSONArray jsonArray=new JSONArray();
-       			String sql = request.getParameter("sql");
-       			/* select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and (ErrorCode like '88' or ErrorCode like '088') group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1038' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1039' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1083' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '1025' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1093' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1044' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '1027' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '604' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '623' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '620' group by report.giddetails.gatewayname,report.iddetails.username;
-					select report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,inbounddlr partition (p20201122) where report.giddetails.serverid like '2' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and inbounddlr.ErrorCode like '621' group by report.giddetails.gatewayname,report.iddetails.username;
-       			 * */
-       			smpp_dao.getFailureAnalysis(jsonArray, sql);
+       			String sqlType = request.getParameter("sqlType");
+       			String date = request.getParameter("date");
+       			String hours = request.getParameter("hours");
+       			String errorCode = request.getParameter("errorCode");
+       			String type = request.getParameter("type");
+       			String pdate = request.getParameter("pdate");
+       			String dateWithHours=date+" "+hours;
+       			if(sqlType.equalsIgnoreCase("sentbox")) {
+       				String sql="select mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as date ,report.giddetails.gatewayname,report.iddetails.username,count(*) as count from report.iddetails,report.giddetails,sentbox partition ("+pdate+") where report.giddetails.serverid like '"+type+"' and report.giddetails.gatewayid=sentbox.GatewayId and report.iddetails.companyid=sentbox.AccountId and ErrorCode like '"+errorCode+"' and date_add(SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%' group by date, report.giddetails.gatewayname,report.iddetails.username;";
+       				smpp_dao.getFailureAnalysis(jsonArray, sql);
+       			}else if(sqlType.equalsIgnoreCase("inbounddlr")) {
+       				String sql="select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as date ,report.giddetails.gatewayname,report.iddetails.username,count(sentbox.AliasMessageId)as sub,sum(if(inbounddlr.ErrorCode='"+errorCode+"',1,0))as err from report.iddetails,report.giddetails,inbounddlr partition ("+pdate+"),sentbox partition ("+pdate+") where report.giddetails.serverid like '"+type+"' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and sentbox.AliasMessageId=inbounddlr.AliasMessageId and date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%' group by date,report.giddetails.gatewayname,report.iddetails.username having err > 0;";
+       				smpp_dao.getFailureAnalysis_InbondDlr(jsonArray, sql);
+       			}
        			out.print(jsonArray.toString());
-       			
+       		}
+           //################################################################### failureAnalysis_SentboxSub  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("failureAnalysis_SentboxSub")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			String hours = request.getParameter("hours");
+       			String type = request.getParameter("type");
+       			String pdate = request.getParameter("pdate");
+       			String dateWithHours=date+" "+hours;
+       			String sql="select mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as date,gatewayname,report.iddetails.username,count(AliasMessageId) as sub from sentbox partition ("+pdate+"),report.giddetails,report.iddetails where (report.giddetails.serverid like '"+type+"') and sentbox.gatewayid=report.giddetails.gatewayid and sentbox.AccountId=report.iddetails.companyid  and date_add(SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%'group by date,gatewayname,username ;";
+       			smpp_dao.getFailureAnalysis_sentBoxSub(jsonArray, sql);
+       			out.print(jsonArray.toString());
        		}
            //################################################################### trafficAnalysis  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("trafficAnalysis")) 

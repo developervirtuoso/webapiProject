@@ -7188,6 +7188,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       	while (rs.next()) {
 				      
 		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("date", rs.getString("date"));
 		                    jsonObject.put("username", rs.getString("username"));
 		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
 		                    jsonObject.put("count", rs.getString("count"));
@@ -7212,10 +7213,82 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 
 				   	}
+					}
+				public void getFailureAnalysis_InbondDlr(JSONArray jsonArray, String sql) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+		               rs = stmt.executeQuery(sql);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("date", rs.getString("date"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("count", rs.getString("err"));
+		                    jsonObject.put("sub", rs.getString("sub"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
 					
+
+				   	}
+				}
+				public void getFailureAnalysis_sentBoxSub(JSONArray jsonArray, String sql) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	try {
+				        
+				       stmt=connection.createStatement();
+		               rs = stmt.executeQuery(sql);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("date", rs.getString("date"));
+		                    jsonObject.put("username", rs.getString("username"));
+		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
+		                    jsonObject.put("sub", rs.getString("sub"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
 					
-				   
-				   }
+
+				   	}
+				}
 				public void getTrafficAnalysis(JSONArray jsonArray, String sql) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
