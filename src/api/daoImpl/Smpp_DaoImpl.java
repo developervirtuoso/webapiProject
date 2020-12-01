@@ -7190,8 +7190,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 		                    JSONObject jsonObject=new JSONObject();
 		                    jsonObject.put("date", rs.getString("date"));
 		                    jsonObject.put("username", rs.getString("username"));
-		                    jsonObject.put("gatewayname", rs.getString("gatewayname"));
-		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("sub", rs.getString("tot_sub"));
+		                    jsonObject.put("count", rs.getString("err"));
 		                    jsonArray.put(jsonObject);
 				       		
 				       }
@@ -9036,6 +9036,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					       		jsonObject.put("companyname",rs.getString("companyname"));
 					       		jsonObject.put("team",rs.getString("team"));
 					       		jsonObject.put("userid",rs.getString("userid"));
+					       		jsonObject.put("dcs",rs.getString("DCS"));
 					       		jsonObject.put("type",type);
 					       		jsonArray.put(jsonObject);
 					       }
