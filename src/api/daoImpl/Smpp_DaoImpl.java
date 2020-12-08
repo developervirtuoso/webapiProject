@@ -93,14 +93,11 @@ import superAdmin.servlet.smppSignIn;
 public class Smpp_DaoImpl {
 	public static void main(String[] args) {
 		Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
-		SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
-        boxBulkFiles.setId("6");
-			boxBulkFiles.setStatus("7");
-			boxBulkFiles.setProcess("50%");
-			boxBulkFiles.setStatus_msg("Completed all process");
-			boxBulkFiles.setGet_file("http://49.50.105.175:8088/smscms/UploadedImages/1606196400523s2bulkLogs23Nov.txt");
-			boxBulkFiles.setRun_status("0");
-			daoImpl.callApiSendBoxBulkStatus(boxBulkFiles);
+		String date="2020-12-08";
+		String date1=daoImpl.getDateWithAddDay(1);
+		String date2=daoImpl.getDateWithAddDay(2);
+		String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "")+",p"+date2.replace("-", "");
+		System.out.println(pdate);
 	}
 
 	final static Logger logger = Logger.getLogger(Smpp_DaoImpl.class);
@@ -8697,6 +8694,138 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public void getLiveSubReport(JSONArray subJsonArray, String date, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	String date1=this.getDateWithAddDay(1);
+					String date2=this.getDateWithAddDay(2);
+					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "");
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select report.iddetails.username,report.iddetails.companyid,report.iddetails.companyname,count(*) as count from report.iddetails,sentbox partition ("+pdate+") where report.iddetails.companyid=sentbox.AccountId and date_add(submitdate,interval 5.30 hour_minute) like '"+date+"%' group by report.iddetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("username"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
+				       		jsonObject.put("type",type);
+				       		subJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getLiveDelReport(JSONArray delJsonArray, String date, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	String date1=this.getDateWithAddDay(1);
+					String date2=this.getDateWithAddDay(2);
+					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "");
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select report.iddetails.username,report.iddetails.companyid,report.iddetails.companyname,count(*) as count from report.iddetails,inbounddlr partition ("+pdate+") where report.iddetails.companyid=inbounddlr.SiteuserId  and ErrorCode like '000' and date_add(submitdate,interval 5.30 hour_minute) like '"+date+"%' group by report.iddetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("username"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
+				       		jsonObject.put("type",type);
+				       		delJsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
+				public void getLiveDel12Report(JSONArray dlr12JsonArray, String date, String type) {
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   	String date1=this.getDateWithAddDay(1);
+					String date2=this.getDateWithAddDay(2);
+					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "")+",p"+date2.replace("-", "");
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       String query="select report.iddetails.username,report.iddetails.companyid,report.iddetails.companyname,count(*) as count from report.iddetails,inbounddlr partition ("+pdate+") where report.iddetails.companyid=inbounddlr.SiteuserId  and ErrorCode like '000' and date_add(submitdate,interval 5.30 hour_minute) like '"+date+"%' group by report.iddetails.username;";
+		               
+				       rs = stmt.executeQuery(query);
+				      
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		jsonObject.put("accountName", rs.getString("username"));
+				       		jsonObject.put("count", rs.getString("count"));
+				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
+				       		jsonObject.put("type",type);
+				       		dlr12JsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				   
+				   }
 				public void getSubReport(JSONArray subJsonArray, String fromDate, String toDate, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
 				   	Statement stmt = null;
@@ -8738,6 +8867,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				
 				public void getDlrReport(JSONArray dlrJsonArray, String fromDate, String toDate, String type) {
 				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
 				   	Statement stmt = null;
@@ -9021,6 +9151,8 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					       		jsonObject.put("team",rs.getString("team"));
 					       		jsonObject.put("userid",rs.getString("userid"));
 					       		jsonObject.put("type",type);
+					       		jsonObject.put("charset", rs.getString("Charset"));
+					       		jsonObject.put("dcs",rs.getString("DCS"));
 					       		jsonArray.put(jsonObject);
 					       }
 				       }else {
@@ -9836,5 +9968,20 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 			   	     } catch (SQLException ignore) {} // no point handling
 					}
 				}
-				
+				public String getDateWithAddDay(int number) {
+					Calendar calendar = Calendar.getInstance(); 
+					calendar.add(Calendar.DAY_OF_MONTH, number);
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+					Date date =calendar.getTime();
+					String newdate=formatter.format(date);
+					return newdate;
+				}
+				public String getDateWithAddDay(int number,String format) {
+					Calendar calendar = Calendar.getInstance(); 
+					calendar.add(Calendar.DAY_OF_MONTH, number);
+					SimpleDateFormat formatter = new SimpleDateFormat(format);  
+					Date date =calendar.getTime();
+					String newdate=formatter.format(date);
+					return newdate;
+				}
 }

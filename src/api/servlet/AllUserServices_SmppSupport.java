@@ -1642,6 +1642,24 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			jsonObject.put("undlr", undlrJsonArray);
        			out.print(jsonObject.toString());
        		}
+           //################################################################### getLiveSubDlrReport  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("getLiveSubDlrReport")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			JSONArray subJsonArray=new JSONArray();
+       			JSONArray dlrJsonArray=new JSONArray();
+       			JSONArray dlr12JsonArray=new JSONArray();
+       			String date = request.getParameter("date");
+       			String type = request.getParameter("type");
+       			smpp_dao.getLiveSubReport(subJsonArray, date,type);
+       			smpp_dao.getLiveDelReport(dlrJsonArray, date, type);
+       			smpp_dao.getLiveDel12Report(dlr12JsonArray, date, type);
+       			jsonObject.put("sub", subJsonArray);
+       			jsonObject.put("dlr", dlrJsonArray);
+       			jsonObject.put("dlr12", dlr12JsonArray);
+       			out.print(jsonObject.toString());
+       		}
            //################################################################### errorSubCodeByCompanyidAndDate  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("errorSubCodeByCompanyidAndDate")) 
        		{
