@@ -94,8 +94,8 @@ public class Smpp_DaoImpl {
 	public static void main(String[] args) {
 		Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();
 		String date="2020-12-08";
-		String date1=daoImpl.getDateWithAddDay(1);
-		String date2=daoImpl.getDateWithAddDay(2);
+		String date1=daoImpl.getNextDate(date,1);
+		String date2=daoImpl.getNextDate(date,2);
 		String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "")+",p"+date2.replace("-", "");
 		System.out.println(pdate);
 	}
@@ -8695,11 +8695,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   }
 				public void getLiveSubReport(JSONArray subJsonArray, String date, String type) {
-				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
-				   	String date1=this.getDateWithAddDay(1);
-					String date2=this.getDateWithAddDay(2);
+				   	String date1=this.getNextDate(date,1);
+					String date2=this.getNextDate(date,2);
 					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "");
 				   	try {
 				        
@@ -8739,11 +8739,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   }
 				public void getLiveDelReport(JSONArray delJsonArray, String date, String type) {
-				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
-				   	String date1=this.getDateWithAddDay(1);
-					String date2=this.getDateWithAddDay(2);
+					String date1=this.getNextDate(date,1);
+					String date2=this.getNextDate(date,2);
 					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "");
 				   	try {
 				        
@@ -8783,11 +8783,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   
 				   }
 				public void getLiveDel12Report(JSONArray dlr12JsonArray, String date, String type) {
-				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
 				   	Statement stmt = null;
 				   	ResultSet rs = null;
-				   	String date1=this.getDateWithAddDay(1);
-					String date2=this.getDateWithAddDay(2);
+					String date1=this.getNextDate(date,1);
+					String date2=this.getNextDate(date,2);
 					String pdate="p"+date.replace("-", "")+",p"+date1.replace("-", "")+",p"+date2.replace("-", "");
 				   	try {
 				        
@@ -9984,4 +9984,20 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					String newdate=formatter.format(date);
 					return newdate;
 				}
+				public  String getNextDate(String  curDate,int day) {
+					 String genDate="";
+					 
+					try {
+						 final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+						 Date date = format.parse(curDate);
+						 final Calendar calendar = Calendar.getInstance();
+						  calendar.setTime(date);
+						  calendar.add(Calendar.DAY_OF_YEAR, day);
+						  genDate =format.format(calendar.getTime());
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					 
+					  return genDate; 
+					}
 }
