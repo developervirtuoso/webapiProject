@@ -1127,7 +1127,52 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			
        			out.print(jsonObject.toString());
        			
-       		}//################################################################### lastEntryMaxDateUserName  ###################################################################// 	
+       		}//################################################################### lastEntryMaxDateNotWeb  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryMaxDateNotWeb")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			String date = request.getParameter("date");
+       			String sqlno = request.getParameter("sqlno");
+       			if(sqlno.equals("1")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitNotWeb1(date);
+       				String maxDateDone=smpp_dao.maxDateDoneNotWeb1(date);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}else if(sqlno.equals("2")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitNotWeb2(date);
+       				String maxDateDone=smpp_dao.maxDateDoneNotWeb2(date);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}
+       			
+       			
+       			out.print(jsonObject.toString());
+       			
+       		}//################################################################### lastEntryMaxDateWeb  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryMaxDateWeb")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONObject jsonObject=new JSONObject();
+       			String date = request.getParameter("date");
+       			String sqlno = request.getParameter("sqlno");
+       			if(sqlno.equals("1")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitWeb1(date);
+       				String maxDateDone=smpp_dao.maxDateDoneWeb1(date);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}else if(sqlno.equals("2")) {
+       				String maxDateSubmit=smpp_dao.maxDateSubmitWeb2(date);
+       				String maxDateDone=smpp_dao.maxDateDoneWeb2(date);
+       				jsonObject.put("maxDateSubmit", maxDateSubmit);
+       				jsonObject.put("maxDateDone", maxDateDone);
+       			}
+       			
+       			
+       			out.print(jsonObject.toString());
+       			
+       		}
+             //################################################################### lastEntryMaxDateUserName  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryMaxDateUserName")) 
        		{
        			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();

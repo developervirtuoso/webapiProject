@@ -6,6 +6,6 @@ public class ApiCons {
 	public static String spanelBaseUrl="http://182.18.144.234:6080/webapi/";
 	public static String tpanelBaseUrl="http://182.18.144.246:6080/webapi/";
 	
-	public static int mysqlAccess=2;
-	//public static int mysqlAccess=0;
+	//public static int mysqlAccess=2;
+	public static int mysqlAccess=0;
 }

@@ -9418,6 +9418,305 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					
 				   
 				   }
+				public String maxDateSubmitWeb1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+				   }
+				public String maxDateDoneWeb1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateSubmitWeb2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from inbounddlr partition ("+date+"),report.iddetails where iddetails.Charset like 'WEB' and report.iddetails.companyid=inbounddlr.SiteuserId;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
+				public String maxDateDoneWeb2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from inbounddlr partition ("+date+"),report.iddetails where iddetails.Charset like 'WEB' and report.iddetails.companyid=inbounddlr.SiteuserId;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateSubmitNotWeb1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+				   }
+				public String maxDateDoneNotWeb1(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
+				public String maxDateSubmitNotWeb2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateSubmit="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from inbounddlr partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and report.iddetails.companyid=inbounddlr.SiteuserId;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateSubmit=rs.getString("maxDateSubmit");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateSubmit;
+					
+					
+				   
+				   }
+				public String maxDateDoneNotWeb2(String date) {
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   String maxDateDone="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from inbounddlr partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and report.iddetails.companyid=inbounddlr.SiteuserId;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				       		maxDateDone=rs.getString("maxDateDone");
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					return maxDateDone;
+					
+					
+				   
+				   }
 				public String maxDateSubmit1(String date) {
 				   	Connection connection=DbConnection_Search.getInstance().getConnection();
 				   	Statement stmt = null;
