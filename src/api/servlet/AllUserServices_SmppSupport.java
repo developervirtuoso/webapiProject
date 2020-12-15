@@ -1817,7 +1817,53 @@ public class AllUserServices_SmppSupport extends HttpServlet {
      			}
      			out.print(jsonArray.toString());
     		
+       		}//################################################################### errorWiseSmscStats  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("errorWiseSmscStats")) 
+       		{
+       			String pdate = request.getParameter("pdate");
+       			String date = request.getParameter("date");
+     			String dataType=request.getParameter("dataType");
+     			JSONArray jsonArray=new JSONArray();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();     			
+     			if(dataType.equalsIgnoreCase("day")) {
+     				daoImpl.getErrorWiseSmscStatsDay(pdate,date,dataType,jsonArray);
+     			}else if(dataType.equalsIgnoreCase("month")) {
+     				daoImpl.getErrorWiseSmscStatsMonth(pdate,date,dataType,jsonArray);
+     			}
+     			out.print(jsonArray.toString());
+    		
+       		}//################################################################### totalSubmission  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("totalSubmission")) 
+       		{
+       			String pdate = request.getParameter("pdate");
+       			String date = request.getParameter("date");
+     			String dataType=request.getParameter("dataType");
+     			JSONObject jsonObject=new JSONObject();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();     			
+     			if(dataType.equalsIgnoreCase("day")) {
+     				daoImpl.getTotalSubmissionDay(pdate,date,dataType,jsonObject);
+     			}else if(dataType.equalsIgnoreCase("month")) {
+     				daoImpl.getTotalSubmissionMonth(pdate,date,dataType,jsonObject);
+     			}
+     			out.print(jsonObject.toString());
+    		
+       		}//################################################################### totalDelivered  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("totalDelivered")) 
+       		{
+       			String pdate = request.getParameter("pdate");
+       			String date = request.getParameter("date");
+     			String dataType=request.getParameter("dataType");
+     			JSONObject jsonObject=new JSONObject();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();     			
+     			if(dataType.equalsIgnoreCase("day")) {
+     				daoImpl.getTotalDeliveredDay(pdate,date,dataType,jsonObject);
+     			}else if(dataType.equalsIgnoreCase("month")) {
+     				daoImpl.getTotalDeliveredMonth(pdate,date,dataType,jsonObject);
+     			}
+     			out.print(jsonObject.toString());
+    		
        		}
+             
              
     }
 

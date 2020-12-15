@@ -10267,6 +10267,210 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 			   	     } catch (SQLException ignore) {} // no point handling
 					}
 				}
+				public void getErrorWiseSmscStatsDay(String pdate, String date, String dataType, JSONArray jsonArray) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select errorcode,count(*) as count from inbounddlr partition ("+pdate+") where date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by ErrorCode order by count(*) desc;";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("errorcode", rs.getString("errorcode"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
+				public void getErrorWiseSmscStatsMonth(String pdate, String date, String dataType, JSONArray jsonArray) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select errorcode,sum(count) as count from iddetails,tbl_delivered where  iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date like '"+date+"%' group by errorcode order by count desc;";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("count", rs.getString("count"));
+		                    jsonObject.put("errorcode", rs.getString("errorcode"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
+				public void getTotalSubmissionDay(String pdate, String date, String dataType, JSONObject jsonObject) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select count(*) as count from sentbox partition("+pdate+") where date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+date+"%';";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    jsonObject.put("count", rs.getString("count"));
+		                   
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
+				public void getTotalSubmissionMonth(String pdate, String date, String dataType, JSONObject jsonObject) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select sum(count) as count from tbl_submitted ,iddetails    where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date like '"+date+"%';";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    jsonObject.put("count", rs.getString("count"));
+		                   
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
+				public void getTotalDeliveredDay(String pdate, String date, String dataType, JSONObject jsonObject) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(4);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select count(*) as count from inbounddlr partition ("+pdate+") where  date_add(inbounddlr.SubmitDate,interval 5.30 hour_minute) like '"+date+"%' and inbounddlr.ErrorCode like '000';";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    jsonObject.put("count", rs.getString("count"));
+		                   
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
+				public void getTotalDeliveredMonth(String pdate, String date, String dataType, JSONObject jsonObject) {
+
+				   	Connection connection=DbConnection_All.getInstance().getConnection(2);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       query = "select sum(count) as count from iddetails,tbl_delivered where errorcode  like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date like '"+date+"%';";   
+				       rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    jsonObject.put("count", rs.getString("count"));
+		                   
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				}
 				public String getDateWithAddDay(int number) {
 					Calendar calendar = Calendar.getInstance(); 
 					calendar.add(Calendar.DAY_OF_MONTH, number);
