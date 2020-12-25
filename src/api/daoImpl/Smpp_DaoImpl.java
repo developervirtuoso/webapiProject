@@ -8834,7 +8834,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname  from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8843,6 +8843,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
 				       		jsonObject.put("count", rs.getString("count"));
 				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
 				       		jsonObject.put("type",type);
 				       		subJsonArray.put(jsonObject);
 				       }
@@ -8876,7 +8877,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_delivered where errorcode like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname from iddetails,tbl_delivered where errorcode like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8885,6 +8886,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
 				       		jsonObject.put("count", rs.getString("count"));
 				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
 				       		jsonObject.put("type",type);
 				       		dlrJsonArray.put(jsonObject);
 				       }
@@ -8917,7 +8919,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid from iddetails,tbl_delivered where errorcode not like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname from iddetails,tbl_delivered where errorcode not like '0' and iddetails.companyid=tbl_delivered.companyid and tbl_delivered.date between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8926,6 +8928,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       		jsonObject.put("accountName", rs.getString("AccountName"));
 				       		jsonObject.put("count", rs.getString("count"));
 				       		jsonObject.put("companyid", rs.getString("companyid"));
+				       		jsonObject.put("companyname", rs.getString("companyname"));
 				       		jsonObject.put("type",type);
 				       		dlrJsonArray.put(jsonObject);
 				       }
