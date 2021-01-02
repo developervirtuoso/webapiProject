@@ -7135,11 +7135,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if(type.equals("1")) {
-				    	   query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '1' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+				    	   query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '1' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%'  group by gatewayname;";
 						}else if(type.equals("2")) {
-							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '2' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '2' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%' group by gatewayname;";
 						}else if(type.equals("3")) {
-							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '3' and sentbox.gatewayid=report.giddetails.gatewayid group by gatewayname;";
+							query = "select gatewayname,count(AliasMessageId) as tot,count(distinct AliasMessageId) as dist from sentbox partition ("+date+"),report.giddetails where report.giddetails.serverid like '3' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%' group by gatewayname;";
 						}
 	                    
 		               rs = stmt.executeQuery(query);
@@ -7379,7 +7379,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username,sentbox.GatewayId from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid order by submit desc limit 5;";
+	                    query = "select date_add(submitdate, interval 5.30 hour_minute) as submit,date_add(donedate, interval 5.30 hour_minute) as receive,Status,MobileNumber,AliasMessageId,report.iddetails.username,sentbox.GatewayId from sentbox partition("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%'  order by submit desc limit 5;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -7471,9 +7471,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if (searchtype.equalsIgnoreCase("mobileNo")) {
-		                  query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MobileNumber ='"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                  query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MessageId Not LIKE '%TR%' and sentbox.MobileNumber ='"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
 		                }else if (searchtype.equalsIgnoreCase("aliasId")) {
-		                    query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and  sentbox.AliasMessageId like '"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
+		                    query = "select inbounddlr.GatewayId,report.giddetails.gatewayname,report.iddetails.username,sentbox.AccountId,sentbox.MobileNumber,date_add(sentbox.submitdate,interval 5.30 hour_minute) as SentDate,date_add(inbounddlr.donedate,interval 5.30 hour_minute) as RecvDate,sentbox.AliasMessageId,sentbox.MessageId,sentbox.SenderId,inbounddlr.Status,inbounddlr.ErrorCode,sentbox.Message from sentbox partition ("+date+"),inbounddlr partition ("+date+"),report.giddetails,report.iddetails where report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=sentbox.AccountId and sentbox.MessageId Not LIKE '%TR%' and  sentbox.AliasMessageId like '"+searchdata+"' and report.giddetails.serverid like '"+type+"'  and sentbox.AliasMessageId=inbounddlr.AliasMessageId;";
 		                   // System.out.println("==>"+query);
 		                }
 		               rs = stmt.executeQuery(query);
@@ -7791,7 +7791,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					try 
 					{
 						stmt=conn.createStatement();
-						  ps=conn.prepareStatement("update "+table+",sentbox partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".GatewayId=sentbox.GatewayId,"+table+".MessageId=sentbox.MessageId,"+table+".MobileNumber=sentbox.MobileNumber,"+table+".AccountId=sentbox.AccountId,"+table+".SentDate=sentbox.SubmitDate,"+table+".SentbStatus=sentbox.Status,"+table+".Message=sentbox.Message,"+table+".SenderId=sentbox.SenderId where "+table+".AliasMessageId=sentbox.AliasMessageId;");
+						  ps=conn.prepareStatement("update "+table+",sentbox partition ("+preDate+","+currentDate+","+nextDate+") set "+table+".GatewayId=sentbox.GatewayId,"+table+".MessageId=sentbox.MessageId,"+table+".MobileNumber=sentbox.MobileNumber,"+table+".AccountId=sentbox.AccountId,"+table+".SentDate=sentbox.SubmitDate,"+table+".SentbStatus=sentbox.Status,"+table+".Message=sentbox.Message,"+table+".SenderId=sentbox.SenderId where "+table+".AliasMessageId=sentbox.AliasMessageId  and sentbox.MessageId Not LIKE '%TR%' ;");
 						  System.out.println(ps.toString());
 						  i= ps.executeUpdate();
 						 SentBoxBulkFiles boxBulkFiles=new SentBoxBulkFiles();
@@ -8204,7 +8204,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date+"),report.iddetails where sentbox.CompanyId=report.iddetails.CompanyId and MobileNumber not like '91__________' group by report.iddetails.username ;";
+						query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date+"),report.iddetails where sentbox.CompanyId=report.iddetails.CompanyId and MessageId Not LIKE '%TR%' and MobileNumber not like '91__' group by report.iddetails.username ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -8245,7 +8245,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select AccountId,SenderId,count(Message) as cnt, Message from sentbox partition ("+date+") where SenderId like '00%' group by SenderId,Message order by cnt desc limit 10;";
+	                    query = "select AccountId,SenderId,count(Message) as cnt, Message from sentbox partition ("+date+") where SenderId like '00%' and MessageId Not LIKE '%TR%' group by SenderId,Message order by cnt desc limit 10;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -8656,11 +8656,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if(type.equals("1")) {
-				    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='1' group by report.giddetails.gatewayname;";
+				    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%' and report.giddetails.serverid='1' group by report.giddetails.gatewayname;";
 						}else if(type.equals("2")) {
-					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='2' group by report.giddetails.gatewayname;";
+					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%' and report.giddetails.serverid='2' group by report.giddetails.gatewayname;";
 						}else if(type.equals("3")) {
-					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and report.giddetails.serverid='3' group by report.giddetails.gatewayname;";
+					    	   query = "select report.giddetails.gatewayname,count(Message) as count from sentbox partition ("+date+"),report.giddetails where Message like '%"+value+"%' and sentbox.gatewayid=report.giddetails.gatewayid and MessageId Not LIKE '%TR%' and report.giddetails.serverid='3' group by report.giddetails.gatewayname;";
 						}
 	                    System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
@@ -8704,7 +8704,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select report.iddetails.username,report.iddetails.companyid,report.iddetails.companyname,count(*) as count from report.iddetails,sentbox partition ("+pdate+") where report.iddetails.companyid=sentbox.AccountId and date_add(submitdate,interval 5.30 hour_minute) like '"+date+"%' group by report.iddetails.username;";
+				       String query="select report.iddetails.username,report.iddetails.companyid,report.iddetails.companyname,count(*) as count from report.iddetails,sentbox partition ("+pdate+") where report.iddetails.companyid=sentbox.AccountId and MessageId Not LIKE '%TR%' and  date_add(submitdate,interval 5.30 hour_minute) like '"+date+"%' group by report.iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -8834,7 +8834,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname  from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname  from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and (errorcode not like '88' or errorcode not like '088') and   tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
@@ -9206,10 +9206,10 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
+			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") where  MessageId Not LIKE '%TR%' group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 
 				      
-	                    System.out.println("query==>"+query);
+	                 //   System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -9251,10 +9251,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
+			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from sentbox partition ("+date+") where  MessageId Not LIKE '%TR%' group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
 
-				      
-	                    System.out.println("query==>"+query);
+			    	   //System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -9297,7 +9296,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 			    	   query = "select substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*)	as count,GatewayId from inbounddlr partition ("+date+") group by substr(DATE_ADD(SubmitDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
-			    	   System.out.println("query==>"+query);
+			    	 //  System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -9340,7 +9339,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 			    	   query = "select substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as substr,count(*) as count,GatewayId from inbounddlr partition ("+date+") group by substr(DATE_ADD(DoneDate, INTERVAL 5.30 HOUR_MINUTE ),1,13),GatewayId;";
-			    	   System.out.println("query==>"+query);
+			    	 //  System.out.println("query==>"+query);
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -9384,11 +9383,11 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				       stmt=connection.createStatement();
 				       String query="";
 				       if(tps_by.equalsIgnoreCase("submitDate")) {
-				    	   query="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				    	   query="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' and report.iddetails.companyname like '%"+companyName+"%' and date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
 				       }else if(tps_by.equalsIgnoreCase("server")) {
-				    	   query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(ServerRequestReceivedDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				    	   query="SELECT mid(date_add(ServerRequestReceivedDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' and report.iddetails.companyname like '%"+companyName+"%' and date_add(ServerRequestReceivedDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
 				       }else if(tps_by.equalsIgnoreCase("doneDate")) {
-				    	   query="SELECT mid(date_add(DoneDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyName+"%' and date_add(DoneDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
+				    	   query="SELECT mid(date_add(DoneDate, interval 5.30 hour_minute),1,19) as pushtime,count(*) as msgcount,report.iddetails.username  from sentbox partition("+date_p+") ,report.iddetails where sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' and report.iddetails.companyname like '%"+companyName+"%' and date_add(DoneDate,interval 5.30 hour_minute) like '"+date+"%' group by pushtime,report.iddetails.username order by msgcount desc limit "+count+";";  
 				       }
 				       System.out.println("query = "+query);
 				       rs = stmt.executeQuery(query);
@@ -9430,7 +9429,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateSubmit=rs.getString("maxDateSubmit");
@@ -9466,7 +9465,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset  like 'WEB' and sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
@@ -9579,7 +9578,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateSubmit=rs.getString("maxDateSubmit");
@@ -9615,7 +9614,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid;";
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where iddetails.Charset not like 'WEB' and sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
@@ -9729,7 +9728,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+") ;";
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+") where MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateSubmit=rs.getString("maxDateSubmit");
@@ -9767,7 +9766,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
+	                    query = "select max(date_add(submitdate,interval 5.30 hour_minute)) as maxDateSubmit from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%' and MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateSubmit=rs.getString("maxDateSubmit");
@@ -9805,7 +9804,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+") ;";
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+") where MessageId Not LIKE '%TR%' ;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
@@ -9843,7 +9842,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%';";
+	                    query = "select max(date_add(donedate,interval 5.30 hour_minute)) as maxDateDone from sentbox partition ("+date+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.username like '%"+username+"%' and MessageId Not LIKE '%TR%';";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				       		maxDateDone=rs.getString("maxDateDone");
@@ -10032,7 +10031,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-	                    query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date_p+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and report.iddetails.companyname like '%"+companyname+"%' and date_add(submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
+	                    query = "select report.iddetails.username,count(*) as count from sentbox partition ("+date_p+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and MessageId Not LIKE '%TR%' and report.iddetails.companyname like '%"+companyname+"%' and date_add(submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by report.iddetails.username;";
 		               rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -10188,9 +10187,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if(selectBy.equals("1")) {
-				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and sentbox.MessageId Not LIKE '%TR%' and  report.iddetails.companyname like '%"+companyName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
 				       }else  if(selectBy.equals("2")) {
-				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and iddetails.username like '%"+userName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				    	   query =  "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and sentbox.MessageId Not LIKE '%TR%' and  report.iddetails.companyname like '%"+companyName+"%' and iddetails.username like '%"+userName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
 				       }
 			    	   
 		               rs = stmt.executeQuery(query);
@@ -10235,9 +10234,9 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				        
 				       stmt=connection.createStatement();
 				       if(selectBy.equals("1")) {
-				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and sentbox.MessageId Not LIKE '%TR%' and  report.iddetails.companyname like '%"+companyName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
 				       }else  if(selectBy.equals("2")) {
-				    	   query = "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and  report.iddetails.companyname like '%"+companyName+"%' and iddetails.username like '%"+userName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
+				    	   query =  "select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,10) as date,sentbox.AccountId,report.iddetails.username,SenderId,count(sentbox.AliasMessageId) as submission,sum(if(inbounddlr.ErrorCode='000',1,0)) as Delivered  from sentbox partition ("+pdate+"),inbounddlr partition ("+pdate+"),report.iddetails where sentbox.AccountId=report.iddetails.companyid and sentbox.AliasMessageId=inbounddlr.AliasMessageId and sentbox.MessageId Not LIKE '%TR%'  and  report.iddetails.companyname like '%"+companyName+"%' and iddetails.username like '%"+userName+"%' and date_add(sentbox.submitdate,interval 5.30 hour_minute ) like '"+date+"%' group by SenderId,report.iddetails.username order by submission desc limit 50;";   
 				       }
 			    	   
 		               rs = stmt.executeQuery(query);
@@ -10279,7 +10278,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       query = "select errorcode,count(*) as count from inbounddlr partition ("+pdate+") where date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by ErrorCode order by count(*) desc;";   
+				       query = "select errorcode,count() as count from inbounddlr partition ("+pdate+") where date_add(SubmitDate,interval 5.30 hour_minute) like '"+date+"%' group by ErrorCode order by count() desc;";   
 				       rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -10351,7 +10350,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       query = "select count(*) as count from sentbox partition("+pdate+") where date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+date+"%';";   
+				       query =  "select count(*) as count from sentbox partition("+pdate+") where date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+date+"%' and MessageId Not LIKE '%TR%';";   
 				       rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      
@@ -10384,7 +10383,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       query = "select sum(count) as count from tbl_submitted ,iddetails    where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date like '"+date+"%';";   
+				       query = "select sum(count) as count from tbl_submitted ,iddetails    where iddetails.companyid=tbl_submitted.companyid and tbl_submitted.date like '"+date+"%' and (errorcode not like '88' or errorcode not like '088');";   
 				       rs = stmt.executeQuery(query);
 				       	while (rs.next()) {
 				      

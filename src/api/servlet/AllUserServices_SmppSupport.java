@@ -1230,11 +1230,11 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        				if(errorCode.equalsIgnoreCase("88")) {
        					sql="select mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as date,report.iddetails.username,count(sentbox.AliasMessageId) as tot_sub,sum(if(sentbox.ErrorCode='88' or sentbox.ErrorCode='088',1,0)) as err  from report.iddetails,sentbox partition ("+pdate+") where  report.iddetails.companyid=sentbox.AccountId  and date_add(SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%'group by date ,report.iddetails.username having err > 0;";
        				}else {
-       					sql="select mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as date,report.iddetails.username,count(sentbox.AliasMessageId) as tot_sub,sum(if(sentbox.ErrorCode='"+errorCode+"',1,0)) as err  from report.iddetails,sentbox partition ("+pdate+") where  report.iddetails.companyid=sentbox.AccountId  and date_add(SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%'group by date ,report.iddetails.username having err > 0;";
+       					sql="select mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as date,report.iddetails.username,count(sentbox.AliasMessageId) as tot_sub,sum(if(sentbox.ErrorCode='"+errorCode+"',1,0)) as err  from report.iddetails,sentbox partition ("+pdate+") where  report.iddetails.companyid=sentbox.AccountId and MessageId Not LIKE '%TR%' and date_add(SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%'group by date ,report.iddetails.username having err > 0;";
        				}
        				smpp_dao.getFailureAnalysis(jsonArray, sql);
        			}else if(sqlType.equalsIgnoreCase("inbounddlr")) {
-       				String sql="select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as date ,report.giddetails.gatewayname,report.iddetails.username,count(sentbox.AliasMessageId)as sub,sum(if(inbounddlr.ErrorCode='"+errorCode+"',1,0))as err from report.iddetails,report.giddetails,inbounddlr partition ("+pdate+"),sentbox partition ("+pdate+") where report.giddetails.serverid like '"+type+"' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and sentbox.AliasMessageId=inbounddlr.AliasMessageId and date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%' group by date,report.giddetails.gatewayname,report.iddetails.username having err > 0;";
+       				String sql="select substr(DATE_ADD(sentbox.submitdate, INTERVAL 5.30 HOUR_MINUTE ),1,13) as date ,report.giddetails.gatewayname,report.iddetails.username,count(sentbox.AliasMessageId)as sub,sum(if(inbounddlr.ErrorCode='"+errorCode+"',1,0))as err from report.iddetails,report.giddetails,inbounddlr partition ("+pdate+"),sentbox partition ("+pdate+") where report.giddetails.serverid like '"+type+"' and report.giddetails.gatewayid=inbounddlr.GatewayId and report.iddetails.companyid=inbounddlr.SiteuserId and sentbox.AliasMessageId=inbounddlr.AliasMessageId and sentbox.MessageId Not LIKE '%TR%' and date_add(sentbox.SubmitDate,interval 5.30 hour_minute) like '"+dateWithHours+"%' group by date,report.giddetails.gatewayname,report.iddetails.username having err > 0;";
        				smpp_dao.getFailureAnalysis_InbondDlr(jsonArray, sql);
        			}
        			out.print(jsonArray.toString());
@@ -1262,7 +1262,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String sqlno = request.getParameter("sqlno");
        			String sql="";
        			if(sqlno.equals("1")) {
-       				sql="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as pushtime,count(distinct AliasMessageId) as msgcount from sentbox partition("+date+") group by mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) with rollup;";
+       				sql="SELECT mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) as pushtime,count(distinct AliasMessageId) as msgcount from sentbox partition("+date+") where  MessageId Not LIKE '%TR%' group by mid(date_add(SubmitDate, interval 5.30 hour_minute),1,13) with rollup;";
        			}else if(sqlno.equals("2")) {
        				sql="SELECT mid(date_add(DoneDate, interval 5.30 hour_minute),1,13) as pushtime,count(distinct AliasMessageId) as msgcount from inbounddlr partition("+date+") where Status is not null group by mid(date_add(DoneDate, interval 5.30 hour_minute),1,13) with rollup;";
        			}
@@ -1641,7 +1641,7 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			String date = request.getParameter("date");
        			String type = request.getParameter("type");
        			String value = request.getParameter("value");
-       			System.out.println("valuevalue 11 ==>"+value);
+       			//System.out.println("valuevalue 11 ==>"+value);
        			smpp_dao.getCheckingCharset(jsonArray, date,type,value);
        			out.print(jsonArray.toString());
        		}
