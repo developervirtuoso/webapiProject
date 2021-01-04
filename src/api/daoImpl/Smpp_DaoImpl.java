@@ -8834,7 +8834,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	try {
 				        
 				       stmt=connection.createStatement();
-				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname  from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and (errorcode not like '88' or errorcode not like '088') and   tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
+				       String query="select iddetails.username as AccountName,sum(count) as count,iddetails.companyid as companyid,iddetails.companyname  from iddetails,tbl_submitted where iddetails.companyid=tbl_submitted.companyid and errorcode not like '88' and   tbl_submitted.date  between cast('"+fromDate+"' as date) and cast('"+toDate+"' as date) group by iddetails.username;";
 		               
 				       rs = stmt.executeQuery(query);
 				      
