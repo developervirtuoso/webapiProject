@@ -9138,11 +9138,13 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   	ResultSet rs = null;
 				  
 				   	try {
-				        
+				   		System.out.println("serverid==>"+serverid);
+				   		System.out.println("type==>"+type);
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
-				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7") || serverid.equals("9")) {
+				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7") || serverid.equals("9") || serverid.equals("10")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
+				    	   System.out.println("query==>"+query);
 				    	   rs = stmt.executeQuery(query);
 					       while (rs.next()) {
 					       		JSONObject jsonObject=new JSONObject();
