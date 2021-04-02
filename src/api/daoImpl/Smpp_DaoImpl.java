@@ -73,6 +73,7 @@ import all.beans.SentBoxBulkFiles;
 import all.beans.SmppUser;
 import all.beans.SmppUserDetails;
 import api.servlet.MyRunnable;
+import common.database.DbConnectionDynamic;
 import common.database.DbConnectionMongo;
 import common.database.DbConnection_All;
 import common.database.DbConnection_ReportData;
@@ -9142,7 +9143,7 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 				   		System.out.println("type==>"+type);
 				       stmt=connection.createStatement();
 				       String query="select * from report.iddetails where serverid="+serverid+";";
-				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7") || serverid.equals("9") || serverid.equals("10")) {
+				       if(serverid.equals("4") || serverid.equals("5") || serverid.equals("6") || serverid.equals("7") || serverid.equals("9") || serverid.equals("10") || serverid.equals("11") || serverid.equals("12")) {
 				    	   query="select * from report.iddetails_new where serverid="+serverid+";";
 				    	   System.out.println("query==>"+query);
 				    	   rs = stmt.executeQuery(query);
@@ -10507,4 +10508,80 @@ public void insertAllUserCountMongoApi(JSONObject jobj, DBCollection collection,
 					 
 					  return genDate; 
 					}
+				public void getLastEntryDate(JSONArray jsonArray, String pdate) {
+
+				   	Connection connection=DbConnection_Search.getInstance().getConnection();
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+	                    query = "Select max(date_add(sentbox.Submitdate,interval 5.30 hour_minute)) as lastentry,AccountId from sentbox partition("+pdate+")  group by AccountId;";
+		               rs = stmt.executeQuery(query);
+				       	while (rs.next()) {
+				      
+		                    JSONObject jsonObject=new JSONObject();
+		                    jsonObject.put("lastentry", rs.getString("lastentry"));
+		                    jsonObject.put("accountId", rs.getString("AccountId"));
+		                    jsonArray.put(jsonObject);
+				       		
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					
+
+				   	}
+					
+				}
+				public void getDynamicSql(String url, String user, String pass, String sql, String cols, JSONArray jsonArray) {
+
+					String colsArr[]=cols.split(",");
+				   	Connection connection=DbConnectionDynamic.getInstance().getConnection(url, user, pass);
+				   	Statement stmt = null;
+				   	ResultSet rs = null;
+				   String query="";
+				   	try {
+				        
+				       stmt=connection.createStatement();
+				       rs = stmt.executeQuery(sql);
+				       	while (rs.next()) {
+				       		JSONObject jsonObject=new JSONObject();
+				       		for (int i = 0; i < colsArr.length; i++) {
+				       			jsonObject.put(colsArr[i], rs.getString(colsArr[i]));
+				     		}
+		                   jsonArray.put(jsonObject);
+				       }
+				     }catch(Exception e){
+				     	e.printStackTrace();
+				     }finally{
+				   	try {
+				   	        if (connection != null)
+				   	     	connection.close();
+				   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (stmt != null)
+			   	        	stmt.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					try {
+			   	        if (rs != null)
+			   	        	rs.close();
+			   	     } catch (SQLException ignore) {} // no point handling
+					}
+				
+					
+				}
 }

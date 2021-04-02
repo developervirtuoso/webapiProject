@@ -1087,6 +1087,15 @@ public class AllUserServices_SmppSupport extends HttpServlet {
        			
        			out.print(jsonArray.toString());
        			
+       		}//################################################################### lastEntryDate  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("lastEntryDate")) 
+       		{
+       			Smpp_DaoImpl smpp_dao = new Smpp_DaoImpl();
+       			JSONArray jsonArray=new JSONArray();
+       			String pdate = request.getParameter("pdate");
+       			smpp_dao.getLastEntryDate(jsonArray, pdate);
+       			out.print(jsonArray.toString());
+       			
        		}//################################################################### dlrMismatch  ###################################################################// 	
        		else if (request.getParameter("api_type").equalsIgnoreCase("dlrMismatch")) 
        		{
@@ -1861,6 +1870,21 @@ public class AllUserServices_SmppSupport extends HttpServlet {
      				daoImpl.getTotalDeliveredMonth(pdate,date,dataType,jsonObject);
      			}
      			out.print(jsonObject.toString());
+    		
+       		}
+           //################################################################### dynamicSql  ###################################################################// 	
+       		else if (request.getParameter("api_type").equalsIgnoreCase("dynamicSql")) 
+       		{
+       			String url = request.getParameter("url");
+       			String user = request.getParameter("user");
+     			String pass=request.getParameter("pass");
+     			String sql=request.getParameter("sql");
+     			String cols=request.getParameter("cols");
+     			JSONArray jsonArray=new JSONArray();
+     			Smpp_DaoImpl daoImpl=new Smpp_DaoImpl();   
+     			daoImpl.getDynamicSql(url,user,pass,sql,cols,jsonArray);
+     			
+     			out.print(jsonArray.toString());
     		
        		}
              
